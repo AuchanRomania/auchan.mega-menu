@@ -3,5 +3,15 @@
   "ttl": 10,
   "timeout": 1,
   "minReplicas": 2,
-  "maxReplicas": 5
+  "maxReplicas": 5,
+  "routes": {
+    "listMenu": {
+      "path": "/_v/private/megamenu/list",
+      "public": true
+    },
+    "keepAlive": {
+      "path": "/_v/private/megamenu/keep-alive",
+      "public": true
+    }
+  }
 }

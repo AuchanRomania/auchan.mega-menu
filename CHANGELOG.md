@@ -3,6 +3,9 @@
 
 ## [Unreleased]
 
+### Added
+- Expose private route to get menu items from vbase
+
 ## [0.0.5] - 2022-11-16
 
 ## [0.0.4] - 2022-11-07
