@@ -6,7 +6,7 @@
   "maxReplicas": 5,
   "routes": {
     "listMenu": {
-      "path": "/_v/private/megamenu/list",
+      "path": "/pub/megamenu/list",
       "public": true
     },
     "keepAlive": {
