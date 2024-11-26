@@ -1,7 +1,18 @@
 {
   "memory": 256,
-  "ttl": 10,
-  "timeout": 1,
+  "ttl": 30,
+  "timeout": 30,
   "minReplicas": 2,
-  "maxReplicas": 5
+  "maxReplicas": 10,
+  "workers": 4,
+  "routes": {
+    "listMenu": {
+      "path": "/pub/megamenu/list",
+      "public": true
+    },
+    "keepAlive": {
+      "path": "/_v/private/megamenu/keep-alive",
+      "public": true
+    }
+  }
 }
