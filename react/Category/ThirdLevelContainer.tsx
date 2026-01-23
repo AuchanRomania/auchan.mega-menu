@@ -294,6 +294,14 @@ const ThirdLevelContainer: FC<InjectedIntlProps> = ({ intl }) => {
                     id: messages.deleteItem.id,
                     intl,
                   }).toString(),
+                  inputOfferCollectionId: formatIOMessage({
+                    id: messages.inputOfferCollectionId.id,
+                    intl,
+                  }).toString(),
+                  inputIsCmsOfferPage: formatIOMessage({
+                    id: messages.inputIsCmsOfferPage.id,
+                    intl,
+                  }).toString(),
                 }}
               />
             </div>

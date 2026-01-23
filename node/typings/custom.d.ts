@@ -13,6 +13,8 @@ export interface Menu {
   slugRoot?: string
   slugRelative?: string
   uploadedIcon?: string
+  isCmsOfferPage?: boolean
+  offerCollectionId?: string
 }
 interface Args {
   menuInput: Menu

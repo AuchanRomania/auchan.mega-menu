@@ -40,6 +40,8 @@ interface TableComponentProps {
     confirm: string
     loading: string
     deleteConfirm: string
+    inputOfferCollectionId: string
+    inputIsCmsOfferPage: string
   }
 }
 

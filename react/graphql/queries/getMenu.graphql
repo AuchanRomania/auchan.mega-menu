@@ -13,6 +13,8 @@ query getMenu($id: ID!) {
     order
     banner
     linkBanner
+    isCmsOfferPage
+    offerCollectionId
     menu {
       id
       name
@@ -27,6 +29,8 @@ query getMenu($id: ID!) {
       order
       slugRoot
       slugRelative
+      isCmsOfferPage
+      offerCollectionId
       menu {
         id
         name
@@ -41,6 +45,8 @@ query getMenu($id: ID!) {
         slugRoot
         slugRelative
         optionalText
+        isCmsOfferPage
+        offerCollectionId
       }
     }
   }
