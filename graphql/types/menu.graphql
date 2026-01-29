@@ -16,6 +16,8 @@ type Menu {
   banner: String
   optionalText: String
   linkBanner: String
+  isCmsOfferPage: Boolean
+  offerCollectionId: String
 }
 
 input MenuInput {
@@ -36,6 +38,8 @@ input MenuInput {
   slugRoot: String
   slugRelative: String
   banner: String
+  isCmsOfferPage: Boolean
+  offerCollectionId: String
   optionalText: String
   linkBanner: String
 }

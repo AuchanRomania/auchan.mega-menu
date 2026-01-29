@@ -13,5 +13,7 @@ mutation uploadData($uploadData: [MenuInput]!) {
     slugRoot
     slugRelative
     uploadedIcon
+    isCmsOfferPage
+    offerCollectionId
   }
 }

@@ -16,6 +16,8 @@ export type MenuItem = {
   banner?: string
   optionalText?: string
   linkBanner?: string
+  isCmsOfferPage?: boolean
+  offerCollectionId?: string
 }
 
 export type MenuItemSave = {
@@ -36,6 +38,8 @@ export type MenuItemSave = {
   banner?: string
   optionalText?: string
   linkBanner?: string
+  isCmsOfferPage?: boolean
+  offerCollectionId?: string
 }
 
 export type MenusResponse = {

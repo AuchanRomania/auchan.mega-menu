@@ -125,6 +125,18 @@ export const messagesForm = defineMessages({
     defaultMessage: '',
     id: 'admin/mega-menu.items.editItem',
   },
+  inputOfferCollectionId: {
+    defaultMessage: '',
+    id: 'admin/mega-menu.items.inputOfferCollectionId',
+  },
+  inputOfferCollectionIdPlaceholder: {
+    defaultMessage: '',
+    id: 'admin/mega-menu.items.inputOfferCollectionIdPlaceholder',
+  },
+  inputIsCmsOfferPage: {
+    defaultMessage: '',
+    id: 'admin/mega-menu.items.inputIsCmsOfferPage',
+  },
 })
 
 export const messagesFirstLevel = defineMessages({
@@ -175,6 +187,18 @@ export const messagesFirstLevel = defineMessages({
   deleteItem: {
     defaultMessage: '',
     id: 'admin/mega-menu.items.deleteItem',
+  },
+  inputOfferCollectionId: {
+    defaultMessage: '',
+    id: 'admin/mega-menu.items.inputOfferCollectionId',
+  },
+  inputOfferCollectionIdPlaceholder: {
+    defaultMessage: '',
+    id: 'admin/mega-menu.items.inputOfferCollectionIdPlaceholder',
+  },
+  inputIsCmsOfferPage: {
+    defaultMessage: '',
+    id: 'admin/mega-menu.items.inputIsCmsOfferPage',
   },
 })
 
@@ -230,6 +254,18 @@ export const messageSecondLevel = defineMessages({
   deleteItem: {
     defaultMessage: '',
     id: 'admin/mega-menu.items.deleteItem',
+  },
+  inputOfferCollectionId: {
+    defaultMessage: '',
+    id: 'admin/mega-menu.items.inputOfferCollectionId',
+  },
+  inputOfferCollectionIdPlaceholder: {
+    defaultMessage: '',
+    id: 'admin/mega-menu.items.inputOfferCollectionIdPlaceholder',
+  },
+  inputIsCmsOfferPage: {
+    defaultMessage: '',
+    id: 'admin/mega-menu.items.inputIsCmsOfferPage',
   },
 })
 
@@ -289,6 +325,18 @@ export const messageThirdLevel = defineMessages({
   deleteItem: {
     defaultMessage: '',
     id: 'admin/mega-menu.items.deleteItem',
+  },
+  inputOfferCollectionId: {
+    defaultMessage: '',
+    id: 'admin/mega-menu.items.inputOfferCollectionId',
+  },
+  inputOfferCollectionIdPlaceholder: {
+    defaultMessage: '',
+    id: 'admin/mega-menu.items.inputOfferCollectionIdPlaceholder',
+  },
+  inputIsCmsOfferPage: {
+    defaultMessage: '',
+    id: 'admin/mega-menu.items.inputIsCmsOfferPage',
   },
 })
 

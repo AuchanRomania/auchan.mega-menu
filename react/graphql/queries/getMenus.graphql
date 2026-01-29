@@ -15,6 +15,8 @@ query getMenus($filterMenuItems: Boolean) {
     slugRelative
     banner
     linkBanner
+    isCmsOfferPage
+    offerCollectionId
     menu {
       id
       name
@@ -27,6 +29,8 @@ query getMenus($filterMenuItems: Boolean) {
       display
       enableSty
       order
+      isCmsOfferPage
+      offerCollectionId
       slugRoot
       slugRelative
       menu {
@@ -41,6 +45,8 @@ query getMenus($filterMenuItems: Boolean) {
         enableSty
         order
         slugRoot
+        isCmsOfferPage
+        offerCollectionId
         slugRelative
         optionalText
       }

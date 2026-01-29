@@ -40,6 +40,8 @@ interface TableComponentProps {
     confirm: string
     loading: string
     deleteConfirm: string
+    inputOfferCollectionId: string
+    inputIsCmsOfferPage: string
   }
 }
 
@@ -205,6 +207,8 @@ const TableComponent: FC<TableComponentProps> = (props) => {
       linkBanner: menuEdit?.linkBanner,
       uploadedIcon: menuEdit?.uploadedIcon,
       banner: menuEdit?.banner,
+      isCmsOfferPage: menuEdit?.isCmsOfferPage,
+      offerCollectionId: menuEdit?.offerCollectionId,
     }
   }
 
@@ -359,6 +363,8 @@ const TableComponent: FC<TableComponentProps> = (props) => {
           linkBanner: dataTempEdit.linkBanner,
           uploadedIcon: dataTempEdit.uploadedIcon,
           banner: dataTempEdit.banner,
+          isCmsOfferPage: dataTempEdit.isCmsOfferPage,
+          offerCollectionId: dataTempEdit.offerCollectionId,
         },
       },
     })

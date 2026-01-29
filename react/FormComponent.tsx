@@ -61,6 +61,8 @@ const FormComponent: FC<FormComponentProps & InjectedIntlProps> = (props) => {
     optionalText: '',
     uploadedIcon: '',
     linkBanner: '',
+    isCmsOfferPage: false,
+    offerCollectionId: '',
   }
 
   const { navigate } = useRuntime()
@@ -82,6 +84,8 @@ const FormComponent: FC<FormComponentProps & InjectedIntlProps> = (props) => {
   const [order, setOrder] = useState(0)
   const [optionalText, setOptionalText] = useState('')
   const [linkBanner, setLinkBanner] = useState('')
+  const [isCmsOfferPage, setIsCmsOfferPage] = useState(false)
+  const [offerCollectionId, setOfferCollectionId] = useState('')
 
   const [message, setMessage] = useState('')
   const [levelInfo, setLevelInfo] = useState(Object)
@@ -178,7 +182,7 @@ const FormComponent: FC<FormComponentProps & InjectedIntlProps> = (props) => {
     }).toString()
   }
 
-  /* eslint max-params: ["error", 14] */
+  /* eslint max-params: ["error", 16] */
   /* eslint-env es9 */
   const setDataForm = (
     idenMenu: string,
@@ -195,7 +199,9 @@ const FormComponent: FC<FormComponentProps & InjectedIntlProps> = (props) => {
     enableStyMenu: boolean,
     orderMenu: number,
     optionalTextMenu: string,
-    linkBannerMenu: string
+    linkBannerMenu: string,
+    isCmsOfferPageMenu: boolean,
+    offerCollectionIdMenu: string
     // eslint-disable-next-line max-params
   ) => {
     setIdMenu(idenMenu)
@@ -213,6 +219,8 @@ const FormComponent: FC<FormComponentProps & InjectedIntlProps> = (props) => {
     setOrder(orderMenu)
     setOptionalText(optionalTextMenu)
     setLinkBanner(linkBannerMenu)
+    setIsCmsOfferPage(isCmsOfferPageMenu)
+    setOfferCollectionId(offerCollectionIdMenu)
   }
 
   useEffect(() => {
@@ -245,7 +253,9 @@ const FormComponent: FC<FormComponentProps & InjectedIntlProps> = (props) => {
           dataMenu.menu.enableSty,
           dataMenu.menu.order,
           dataMenu.menu.optionalText ?? '',
-          dataMenu.menu.linkBanner ?? ''
+          dataMenu.menu.linkBanner ?? '',
+          dataMenu.menu.isCmsOfferPage ?? false,
+          dataMenu.menu.offerCollectionId ?? ''
         )
       } else if (responseForm.level === 'secondLevel') {
         setLevelInfo({ firstLevel: dataMenu.menu.name })
@@ -281,7 +291,9 @@ const FormComponent: FC<FormComponentProps & InjectedIntlProps> = (props) => {
           submenu[0].enableSty,
           submenu[0].order,
           submenu[0].optionalText ?? '',
-          submenu[0].linkBanner ?? ''
+          submenu[0].linkBanner ?? '',
+          submenu[0].isCmsOfferPage ?? false,
+          submenu[0].offerCollectionId ?? ''
         )
       } else {
         const tempArrayTL: DataMenu[] = []
@@ -332,7 +344,9 @@ const FormComponent: FC<FormComponentProps & InjectedIntlProps> = (props) => {
           tempArrayTL[0].enableSty,
           tempArrayTL[0].order ?? 0,
           tempArrayTL[0].optionalText ?? '',
-          tempArrayTL[0].linkBanner ?? ''
+          tempArrayTL[0].linkBanner ?? '',
+          tempArrayTL[0].isCmsOfferPage ?? false,
+          tempArrayTL[0].offerCollectionId ?? ''
         )
 
         setLevelInfo({
@@ -446,6 +460,14 @@ const FormComponent: FC<FormComponentProps & InjectedIntlProps> = (props) => {
         setLinkBanner(e.value)
         break
 
+      case 'isCmsOfferPage':
+        setIsCmsOfferPage(Boolean(e.value))
+        break
+
+      case 'offerCollectionId':
+        setOfferCollectionId(e.value)
+        break
+
       default:
         break
     }
@@ -486,6 +508,8 @@ const FormComponent: FC<FormComponentProps & InjectedIntlProps> = (props) => {
           banner: mainMenuLevel.banner,
           optionalText: mainMenuLevel.optionalText,
           linkBanner: mainMenuLevel.linkBanner,
+          isCmsOfferPage: mainMenuLevel.isCmsOfferPage,
+          offerCollectionId: mainMenuLevel.offerCollectionId,
         },
       },
     })
@@ -512,6 +536,8 @@ const FormComponent: FC<FormComponentProps & InjectedIntlProps> = (props) => {
             enableSty,
             banner,
             linkBanner,
+            isCmsOfferPage,
+            offerCollectionId,
           },
         },
       })
@@ -534,6 +560,8 @@ const FormComponent: FC<FormComponentProps & InjectedIntlProps> = (props) => {
         slugRoot: slug,
         slugRelative: menu.slug,
         uploadedIcon,
+        isCmsOfferPage,
+        offerCollectionId,
       })
 
       insertSubMenu(
@@ -549,6 +577,8 @@ const FormComponent: FC<FormComponentProps & InjectedIntlProps> = (props) => {
           enableSty: menu.enableSty,
           order: menu.order,
           banner: menu.banner,
+          isCmsOfferPage: menu.isCmsOfferPage,
+          offerCollectionId: menu.offerCollectionId,
           uploadedIcon: menu.uploadedIcon,
           linkBanner: menu.linkBanner,
         },
@@ -575,6 +605,8 @@ const FormComponent: FC<FormComponentProps & InjectedIntlProps> = (props) => {
         enableSty,
         order: valueOrder ? valueOrder.length + 1 : 1,
         slugRoot: slug,
+        isCmsOfferPage,
+        offerCollectionId,
         slugRelative: `${valueSlug}`,
         optionalText,
       }
@@ -609,6 +641,8 @@ const FormComponent: FC<FormComponentProps & InjectedIntlProps> = (props) => {
           banner: menu.banner,
           optionalText: menu.optionalText,
           linkBanner: menu.linkBanner,
+          isCmsOfferPage: menu.isCmsOfferPage,
+        offerCollectionId: menu.offerCollectionId,
         },
         menu.menu ? menu.menu : []
       )
@@ -721,6 +755,8 @@ const FormComponent: FC<FormComponentProps & InjectedIntlProps> = (props) => {
           banner,
           optionalText,
           linkBanner,
+          isCmsOfferPage,
+          offerCollectionId,
         },
         menuLevelTwoUpdate
       )
@@ -744,6 +780,8 @@ const FormComponent: FC<FormComponentProps & InjectedIntlProps> = (props) => {
         tempSecond[0].enableSty = enableSty
         tempSecond[0].order = order
         tempSecond[0].uploadedIcon = uploadedIcon
+        tempSecond[0].isCmsOfferPage = isCmsOfferPage
+        tempSecond[0].offerCollectionId = offerCollectionId
       }
 
       let menuLevelThirdUpdate: MenuItem[] = []
@@ -802,6 +840,8 @@ const FormComponent: FC<FormComponentProps & InjectedIntlProps> = (props) => {
           order: menu.order,
           banner: menu.banner,
           linkBanner: menu.linkBanner,
+          isCmsOfferPage: menu.isCmsOfferPage,
+          offerCollectionId: menu.offerCollectionId,
         },
         menu.menu ? menu.menu : []
       )
@@ -836,6 +876,8 @@ const FormComponent: FC<FormComponentProps & InjectedIntlProps> = (props) => {
           tempThird[0].enableSty = enableSty
           tempThird[0].order = order
           tempThird[0].optionalText = optionalText
+          tempThird[0].isCmsOfferPage = isCmsOfferPage
+          tempThird[0].offerCollectionId = offerCollectionId
         }
       }
 
@@ -857,6 +899,8 @@ const FormComponent: FC<FormComponentProps & InjectedIntlProps> = (props) => {
           banner: menu.banner,
           optionalText: menu.optionalText,
           linkBanner: menu.linkBanner,
+          isCmsOfferPage: menu.isCmsOfferPage,
+          offerCollectionId: menu.offerCollectionId,
         },
         menu.menu ? menu.menu : []
       )
@@ -1246,6 +1290,34 @@ const FormComponent: FC<FormComponentProps & InjectedIntlProps> = (props) => {
               </div>
             </div>
           )}
+          <div>
+            <div className="mb5">
+              <Input
+                placeholder={messageTranslate(
+                  'inputOfferCollectionIdPlaceholder'
+                )}
+                label={messageTranslate('inputOfferCollectionId')}
+                value={offerCollectionId}
+                id="offerCollectionId"
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  changeStyle({
+                    id: e.target.id,
+                    value: e.target.value,
+                  })
+                }
+              />
+            </div>
+            <div className="mb5">
+              <Toggle
+                label={messageTranslate('inputIsCmsOfferPage')}
+                checked={isCmsOfferPage}
+                id="isCmsOfferPage"
+                onChange={() =>
+                  setIsCmsOfferPage(!isCmsOfferPage)
+                }
+              />
+            </div>
+          </div>
           <div>
             <div className="t-heading-5  mb4">
               {messageTranslate('titleSubBlock')}
