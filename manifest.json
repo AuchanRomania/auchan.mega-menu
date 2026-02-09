@@ -1,7 +1,7 @@
 {
   "name": "mega-menu",
   "vendor": "auchan",
-  "version": "0.2.0",
+  "version": "0.8.1",
   "title": "Mega Menu",
   "description": "Create, personalize and manage the category tree. It's can be used in the shop as main menu",
   "mustUpdateAt": "2022-08-28",
@@ -29,7 +29,8 @@
     "vtex.store": "2.x",
     "vtex.render-runtime": "8.x",
     "vtex.order-manager": "0.x",
-    "vtex.session-client": "1.x"
+    "vtex.session-client": "1.x",
+    "vtex.admin-navigation": "0.x"
   },
   "policies": [
     {

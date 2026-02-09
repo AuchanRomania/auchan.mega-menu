@@ -14,7 +14,7 @@ import { megaMenuState } from '../State'
 import styles from '../styles.css'
 import Item from './Item'
 import Submenu from './Submenu'
-import { BUTTON_ID } from './TriggerButton'
+// BUTTON_ID no longer needed - handleClickOutside removed
 
 const CSS_HANDLES = [
   'menuContainer',
@@ -28,7 +28,6 @@ const CSS_HANDLES = [
 const HorizontalMenu: FC<InjectedIntlProps> = observer(({ intl }) => {
   const { handles } = useCssHandles(CSS_HANDLES)
   const {
-    isOpenMenu,
     departments,
     departmentActive,
     config: { title, defaultDepartmentActive },
@@ -50,33 +49,7 @@ const HorizontalMenu: FC<InjectedIntlProps> = observer(({ intl }) => {
     debouncedHandleMouseEnter.cancel()
   }
 
-  const handleClickOutside = useCallback(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (event: any) => {
-      const isTriggerButton = event?.path?.find(
-        (data: HTMLElement) => data.dataset?.id === BUTTON_ID
-      )
-
-      if (
-        navRef.current &&
-        !navRef.current.contains(event.target as Node) &&
-        !isTriggerButton
-      ) {
-        openMenu(false)
-      }
-
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    },
-    [openMenu]
-  )
-
-  useEffect(() => {
-    document.addEventListener('click', handleClickOutside, true)
-
-    return () => {
-      document.removeEventListener('click', handleClickOutside, true)
-    }
-  }, [])
+  // handleClickOutside removed - menu stays open, toggled only by button
 
   useEffect(() => {
     const defaultDepartment = departments.find(
@@ -148,13 +121,14 @@ const HorizontalMenu: FC<InjectedIntlProps> = observer(({ intl }) => {
   }, [])
 
   return departmentItems?.length > 0 ? (
-    <div style={{ display: isOpenMenu ? 'block' : 'none' }}>
+    <div style={{ display: 'block' }}>
       <nav
         className={classNames(
           handles.menuContainerNav,
-          'absolute left-0 bg-white bw1 bb b--muted-3 flex'
+          'absolute left-0 bw1 bb b--muted-3 flex'
         )}
         ref={navRef}
+        style={{ background: '#00FF00' }}
       >
         <ul
           className={classNames(

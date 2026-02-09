@@ -8,7 +8,7 @@ class MegaMenuState {
   public config: GlobalConfig = {}
   public departments: MenuItem[] = []
   public departmentActive: MenuItem | null = null
-  public isOpenMenu = false
+  public isOpenMenu = true
 
   constructor() {
     makeAutoObservable(this)
