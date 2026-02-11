@@ -115,7 +115,7 @@ const Item: FC<ItemProps> = observer((props) => {
       <div
         className={classNames(
           handles.styledLinkText,
-          'flex justify-between items-center',
+          'flex items-center',
           iconPosition === 'left' && iconComponent && 'nowrap'
         )}
         {...(enableStyle && { style: stylesItem })}

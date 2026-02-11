@@ -90,7 +90,6 @@ const HorizontalMenu: FC<InjectedIntlProps> = observer(({ intl }) => {
                 to={d.slug}
                 iconId={d.icon}
                 accordion={hasCategories}
-                className={classNames('pv3 mh5')}
                 style={d.styles}
                 enableStyle={d.enableSty}
                 closeMenu={openMenu}
