@@ -28,6 +28,7 @@ const CSS_HANDLES = [
 const HorizontalMenu: FC<InjectedIntlProps> = observer(({ intl }) => {
   const { handles } = useCssHandles(CSS_HANDLES)
   const {
+    isOpenMenu,
     departments,
     departmentActive,
     config: { title, defaultDepartmentActive },
@@ -121,7 +122,7 @@ const HorizontalMenu: FC<InjectedIntlProps> = observer(({ intl }) => {
   }, [])
 
   return departmentItems?.length > 0 ? (
-    <div style={{ display: 'block' }}>
+    <div style={{ display: isOpenMenu ? 'block' : 'none' }}>
       <nav
         className={classNames(
           handles.menuContainerNav,

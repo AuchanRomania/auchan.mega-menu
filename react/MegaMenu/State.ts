@@ -32,6 +32,12 @@ class MegaMenuState {
     } else {
       this.isOpenMenu = value(this.isOpenMenu)
     }
+
+    // Cand se inchide meniul, reseteaza categoria activa
+    // ca la redeschidere sa apara doar lista de categorii
+    if (!this.isOpenMenu) {
+      this.departmentActive = null
+    }
   }
 
   public getCategories = () => {
