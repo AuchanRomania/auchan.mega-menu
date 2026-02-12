@@ -154,7 +154,7 @@ const HorizontalMenu: FC<InjectedIntlProps> = observer(({ intl }) => {
         </ul>
         {departments.length ? (
           <div
-            className={classNames(styles.submenuContainer, 'pa5 w-100')}
+            className={classNames(styles.submenuContainer, handles.submenuContainer, 'pa5')}
             style={{
               display:
                 departments.length &&
