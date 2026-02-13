@@ -148,7 +148,7 @@ const VerticalMenu: FC<VerticalMenuProps> = observer(({ intl }) => {
                                     )
                                   }
                                   isOpen={isCatOpen}
-                                  caretColor="base"
+                                  caretColor="muted"
                                 >
                                   <div className={handles.collapsibleContent}>
                                     <div

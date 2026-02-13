@@ -381,25 +381,39 @@
     padding: 0 0 0 3rem;
   }
 
-  .submenuItemVertical--isClosed :global(.vtex__icon-caret-down),
-  .submenuItemVertical--isOpen :global(.vtex__icon-caret-up) {
+  /* Collapsible caret icons - make them thin and light like department arrows */
+  .submenuItemVertical :global(.vtex__icon-caret-down),
+  .submenuItemVertical :global(.vtex__icon-caret-up) {
     display: block;
     width: 20px;
     height: 20px;
     border-radius: 12px;
   }
 
-  .submenuItemVertical--isClosed :global(.vtex__icon-caret-down) path,
-  .submenuItemVertical--isOpen :global(.vtex__icon-caret-up) path {
+  .submenuItemVertical :global(.vtex__icon-caret-down) path,
+  .submenuItemVertical :global(.vtex__icon-caret-up) path {
     display: none;
   }
 
-  .submenuItemVertical--isClosed :global(.vtex__icon-caret-down) {
-    background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCI+PHBhdGggZD0iTTUuMzkgOS4xNjFhLjUyNi41MjYgMCAwMS43MzQtLjAyM0wxMiAxNC41NDJsNS44NzYtNS40MDRhLjUyNi41MjYgMCAwMS43MzQuMDIzLjUwMy41MDMgMCAwMS0uMDI0LjcybC02LjIzIDUuNzMxYS41MjcuNTI3IDAgMDEtLjcxMSAwbC02LjIzLTUuNzNhLjUwMy41MDMgMCAwMS0uMDI1LS43MjF6IiBmaWxsPSIjMDIxODJCIi8+PC9zdmc+);
+  .submenuItemVertical :global(.vtex__icon-caret-down) {
+    background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgdmlld0JveD0iMCAwIDIwIDIwIj48cGF0aCBkPSJNNiA4bDQgNCA0LTQiIHN0cm9rZT0iIzEyMTIxMiIgc3Ryb2tlLXdpZHRoPSIxLjUiIGZpbGw9Im5vbmUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjwvc3ZnPg==);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
   }
 
-  .submenuItemVertical--isOpen :global(.vtex__icon-caret-up) {
-    background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCI+PHBhdGggZD0iTTE4LjYxIDE0LjgzOWEuNTI2LjUyNiAwIDAxLS43MzQuMDIzTDEyIDkuNDU4bC01Ljg3NiA1LjQwNGEuNTI2LjUyNiAwIDAxLS43MzQtLjAyMy41MDMuNTAzIDAgMDEuMDI0LS43Mmw2LjIzLTUuNzMxYS41MjcuNTI3IDAgMDEuNzExIDBsNi4yMyA1LjczYy4yMS4xOTMuMjIuNTE2LjAyNS43MjF6IiBmaWxsPSIjMDIxODJCIi8+PC9zdmc+);
+  .submenuItemVertical :global(.vtex__icon-caret-up) {
+    background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgdmlld0JveD0iMCAwIDIwIDIwIj48cGF0aCBkPSJNNiAxMmw0LTQgNCA0IiBzdHJva2U9IiMxMjEyMTIiIHN0cm9rZS13aWR0aD0iMS41IiBmaWxsPSJub25lIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz48L3N2Zz4=);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+
+  /* Override Collapsible caret wrapper color to match department arrows */
+  .submenuItemVertical > div > div[role='button'] > :global(.c-on-base),
+  .submenuItemVertical > div > div[role='button'] > :global(.c-muted-2),
+  .submenuItemVertical > div > div[role='button'] > :global(.c-muted-3) {
+    color: #727273 !important;
   }
 
   .seeAllLinkContainer {
