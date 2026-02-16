@@ -8,6 +8,7 @@ import Skeleton from 'react-loading-skeleton'
 import { useCssHandles } from 'vtex.css-handles'
 import { formatIOMessage } from 'vtex.native-types'
 import { Link } from 'vtex.render-runtime'
+import { useRenderSession } from 'vtex.session-client'
 import { IconCaret } from 'vtex.store-icons'
 import { Collapsible } from 'vtex.styleguide'
 
@@ -40,12 +41,37 @@ const CSS_HANDLES = [
   'contButtonsContainer',
   'contButtonPrimary',
   'contButtonOutlined',
+  'contMenuList',
+  'contMenuItem',
+  'contMenuItemIcon',
+  'contMenuItemText',
 ] as const
+
+const ACCOUNT_MENU_ITEMS = [
+  { label: 'Profil', href: '/account#/profile' },
+  { label: 'Adrese', href: '/account#/addresses' },
+  { label: 'Comenzi', href: '/account#/orders' },
+  { label: 'Companii', href: '/account#/my-companies' },
+  { label: 'Schimba parola', href: '/account#/change-password' },
+  { label: 'Favorite', href: '/account#/wishlist' },
+  { label: 'MyCLUB Auchan', href: '/account#/loyalty' },
+  { label: 'Deconectare', href: '/_v/private/logout' },
+]
 
 const VerticalMenu: FC<VerticalMenuProps> = observer(({ intl }) => {
   const { handles } = useCssHandles(CSS_HANDLES)
   const { departments, config } = megaMenuState
   const { title } = config
+  const { session, loading: sessionLoading } = useRenderSession()
+
+  const isAuthenticated = useMemo(() => {
+    if (sessionLoading || !session) return false
+
+    const profileNs = (session as any)?.namespaces?.profile
+    const authValue = profileNs?.isAuthenticated?.value
+
+    return authValue === 'true' || authValue === true
+  }, [session, sessionLoading])
 
   const [isContOpen, setIsContOpen] = useState(false)
   const [isProduseOpen, setIsProduseOpen] = useState(false)
@@ -312,20 +338,35 @@ const VerticalMenu: FC<VerticalMenuProps> = observer(({ intl }) => {
               </button>
             </div>
             {isContOpen && (
-              <div className={handles.contButtonsContainer}>
-                <a
-                  href="/login"
-                  className={classNames(handles.contButtonPrimary, 'no-underline db tc')}
-                >
-                  AUTENTIFICARE
-                </a>
-                <a
-                  href="/login"
-                  className={classNames(handles.contButtonOutlined, 'no-underline db tc')}
-                >
-                  CONT NOU
-                </a>
-              </div>
+              isAuthenticated ? (
+                <ul className={classNames(handles.contMenuList, 'list pa0 ma0')}>
+                  {ACCOUNT_MENU_ITEMS.map((item) => (
+                    <li key={item.href} className={handles.contMenuItem}>
+                      <a
+                        href={item.href}
+                        className={classNames(handles.contMenuItem, 'no-underline flex items-center')}
+                      >
+                        <span className={handles.contMenuItemText}>{item.label}</span>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <div className={handles.contButtonsContainer}>
+                  <a
+                    href="/login"
+                    className={classNames(handles.contButtonPrimary, 'no-underline db tc')}
+                  >
+                    AUTENTIFICARE
+                  </a>
+                  <a
+                    href="/login"
+                    className={classNames(handles.contButtonOutlined, 'no-underline db tc')}
+                  >
+                    CONT NOU
+                  </a>
+                </div>
+              )
             )}
           </li>
           {departments.length ? (
