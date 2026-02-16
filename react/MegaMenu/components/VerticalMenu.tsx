@@ -8,6 +8,7 @@ import Skeleton from 'react-loading-skeleton'
 import { useCssHandles } from 'vtex.css-handles'
 import { formatIOMessage } from 'vtex.native-types'
 import { Link } from 'vtex.render-runtime'
+import { IconCaret } from 'vtex.store-icons'
 import { Collapsible } from 'vtex.styleguide'
 
 import type { MenuItem } from '../../shared'
@@ -36,7 +37,6 @@ const CSS_HANDLES = [
   'styledLinkText',
   'accordionIconContainer',
   'accordionIcon',
-  'produseToggleArrow',
 ] as const
 
 const VerticalMenu: FC<VerticalMenuProps> = observer(({ intl }) => {
@@ -301,14 +301,9 @@ const VerticalMenu: FC<VerticalMenuProps> = observer(({ intl }) => {
                       Produse
                     </div>
                     <div
-                      className={classNames(handles.accordionIconContainer, 'ml1 c-muted-3')}
+                      className={classNames(handles.accordionIconContainer, isProduseOpen ? 'accordionIconContainer--isOpen' : 'accordionIconContainer--isClosed', 'ml1 c-muted-3')}
                     >
-                      <span
-                        className={handles.produseToggleArrow}
-                        style={{
-                          transform: isProduseOpen ? 'rotate(-90deg)' : 'rotate(90deg)',
-                        }}
-                      />
+                      <IconCaret classNames={handles.accordionIcon} orientation="right" />
                     </div>
                   </div>
                 </button>
