@@ -408,6 +408,44 @@ const VerticalMenu: FC<VerticalMenuProps> = observer(({ intl }) => {
               <Skeleton count={4} height={40} />
             </div>
           )}
+          <li className={handles.menuItemVertical}>
+            <div className={handles.styledLinkContainer}>
+              <a
+                href="/promotii"
+                className={classNames(handles.styledLink, 'no-underline c-on-base w-100 pa0 t-body pointer flex')}
+              >
+                <div className={classNames(handles.styledLinkContent, 'flex justify-between w-100')}>
+                  <div className={classNames(handles.styledLinkText, 'flex items-center')}>
+                    <img
+                      className={handles.menuItemIcon}
+                      src="https://auchanqa.vtexassets.com/assets/vtex.file-manager-graphql/images/43d62da6-9178-4e44-9138-34682358bd85___47911f09aaf6064bf075c8e95f33c7dd.svg"
+                      alt=""
+                    />
+                    Promotii
+                  </div>
+                </div>
+              </a>
+            </div>
+          </li>
+          <li className={handles.menuItemVertical}>
+            <div className={handles.styledLinkContainer}>
+              <a
+                href="/cataloagele-auchan"
+                className={classNames(handles.styledLink, 'no-underline c-on-base w-100 pa0 t-body pointer flex')}
+              >
+                <div className={classNames(handles.styledLinkContent, 'flex justify-between w-100')}>
+                  <div className={classNames(handles.styledLinkText, 'flex items-center')}>
+                    <img
+                      className={handles.menuItemIcon}
+                      src="data:image/svg+xml,%3Csvg width='32' height='32' viewBox='0 0 32 32' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M26.6667 6.66667H14.6667C13.4667 5.06667 11.4667 4 9.33333 4H6.66667C5.86667 4 5.33333 4.53333 5.33333 5.33333V6.8C4.53333 6.8 4 7.33333 4 8.13333V26.6667C4 27.4667 4.53333 28 5.33333 28H6.26667C6.4 28 6.53333 28 6.66667 28H26.6667C27.4667 28 28 27.4667 28 26.6667V8C28 7.2 27.4667 6.66667 26.6667 6.66667ZM5.6 27.3333L5.73333 27.4667C5.6 27.4667 5.6 27.3333 5.6 27.3333ZM14.6667 26.6667H6.66667V5.33333H9.33333C12.2667 5.33333 14.6667 7.73333 14.6667 10.6667V26.6667ZM26.6667 26.6667H16V8H26.6667V26.6667Z' fill='%2302182B'/%3E%3Cpath d='M18 25.3333H23.3333C23.7333 25.3333 24 25.0667 24 24.6667C24 24.2667 23.7333 24 23.3333 24H18C17.6 24 17.3333 24.2667 17.3333 24.6667C17.3333 25.0667 17.6 25.3333 18 25.3333Z' fill='%2302182B'/%3E%3Cpath d='M18 22.6667H20.8C21.2 22.6667 21.4667 22.4 21.4667 22C21.4667 21.6 21.0667 21.3333 20.8 21.3333H18C17.6 21.3333 17.3333 21.6 17.3333 22C17.3333 22.4 17.6 22.6667 18 22.6667Z' fill='%2302182B'/%3E%3Cpath d='M18 12H23.3333C23.7333 12 24 11.7333 24 11.3333C24 10.9333 23.7333 10.6667 23.3333 10.6667H18C17.6 10.6667 17.3333 10.9333 17.3333 11.3333C17.3333 11.7333 17.6 12 18 12Z' fill='%2302182B'/%3E%3Cpath d='M22.6667 13.3333H18.6667C17.8667 13.3333 17.3333 13.8667 17.3333 14.6667V18.6667C17.3333 19.4667 17.8667 20 18.6667 20H22.6667C23.4667 20 24 19.4667 24 18.6667V14.6667C24 13.8667 23.3333 13.3333 22.6667 13.3333ZM22.6667 18.6667H18.6667V14.6667H22.6667V18.6667Z' fill='%2302182B'/%3E%3C/svg%3E"
+                      alt=""
+                    />
+                    Catalog
+                  </div>
+                </div>
+              </a>
+            </div>
+          </li>
         </ul>
       </div>
     </nav>
