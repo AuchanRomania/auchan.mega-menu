@@ -37,6 +37,9 @@ const CSS_HANDLES = [
   'styledLinkText',
   'accordionIconContainer',
   'accordionIcon',
+  'contButtonsContainer',
+  'contButtonPrimary',
+  'contButtonOutlined',
 ] as const
 
 const VerticalMenu: FC<VerticalMenuProps> = observer(({ intl }) => {
@@ -44,6 +47,7 @@ const VerticalMenu: FC<VerticalMenuProps> = observer(({ intl }) => {
   const { departments, config } = megaMenuState
   const { title } = config
 
+  const [isContOpen, setIsContOpen] = useState(false)
   const [isProduseOpen, setIsProduseOpen] = useState(false)
   // Track which department is expanded (null = none)
   const [expandedDeptId, setExpandedDeptId] = useState<string | null>(null)
@@ -280,6 +284,50 @@ const VerticalMenu: FC<VerticalMenuProps> = observer(({ intl }) => {
           {formatIOMessage({ id: title, intl })}
         </div>
         <ul className={classNames(handles.menuContainerVertical, 'list')}>
+          <li className={handles.menuItemVertical}>
+            <div
+              className={handles.styledLinkContainer}
+              onClick={() => setIsContOpen((prev) => !prev)}
+            >
+              <button
+                className={classNames(handles.styledLink, 'no-underline c-on-base w-100 pa0 t-body pointer')}
+                tabIndex={0}
+                type="button"
+              >
+                <div className={classNames(handles.styledLinkContent, 'flex justify-between')}>
+                  <div className={classNames(handles.styledLinkText, 'flex items-center')}>
+                    <img
+                      className={handles.menuItemIcon}
+                      src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='32' height='32'%3E%3Cpath d='M17 6.27V4a2 2 0 00-2-2h-4a4 4 0 00-4 4v.27a2 2 0 00.07 3.5A5 5 0 0012 14h.08a4.89 4.89 0 004.86-4.24 2 2 0 00.05-3.49zm-1 2.95c-.003.26-.037.518-.1.77a3.92 3.92 0 01-3.81 3H12a4 4 0 01-3.87-3 3.34 3.34 0 01-.12-.77 1.24 1.24 0 010-2.44V6a3 3 0 013-3h4a1 1 0 011 1v2.78a1.24 1.24 0 010 2.44zM15 17a4 4 0 014 4H5a4 4 0 014-4zm0-1H9a5 5 0 00-5 5v1h16v-1a5 5 0 00-5-5z' fill='%2302182B'/%3E%3C/svg%3E"
+                      alt=""
+                    />
+                    Cont
+                  </div>
+                  <div
+                    className={classNames(handles.accordionIconContainer, isContOpen ? 'accordionIconContainer--isOpen' : 'accordionIconContainer--isClosed', 'ml1 c-muted-3')}
+                  >
+                    <IconCaret classNames={handles.accordionIcon} orientation="right" />
+                  </div>
+                </div>
+              </button>
+            </div>
+            {isContOpen && (
+              <div className={handles.contButtonsContainer}>
+                <a
+                  href="/login"
+                  className={classNames(handles.contButtonPrimary, 'no-underline db tc')}
+                >
+                  AUTENTIFICARE
+                </a>
+                <a
+                  href="/login"
+                  className={classNames(handles.contButtonOutlined, 'no-underline db tc')}
+                >
+                  CONT NOU
+                </a>
+              </div>
+            )}
+          </li>
           {departments.length ? (
             <li className={handles.menuItemVertical}>
               <div
