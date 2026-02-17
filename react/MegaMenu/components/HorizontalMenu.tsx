@@ -42,25 +42,46 @@ const HorizontalMenu: FC<InjectedIntlProps> = observer(({ intl }) => {
   const containerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    const allContainers = document.querySelectorAll('[class*="megaMenuContainer"]')
+    const outerRow = document.querySelector('[class*="flexRow--megaMenuContainer"]') as HTMLElement
+    const contentRow = document.querySelector('[class*="flexRowContent--megaMenuContainer"]') as HTMLElement
+    const headerWrapper =
+      (document.querySelector('[class*="wrapper--headerDesktop"]') as HTMLElement) ??
+      (document.querySelector('[class*="stickyLayout--headerDesktop"]') as HTMLElement)
 
-    allContainers.forEach((el) => {
-      const htmlEl = el as HTMLElement
-
-      htmlEl.style.display = isOpenMenu ? '' : 'none'
-
-      if (!isHomePage && isOpenMenu) {
-        htmlEl.style.position = 'absolute'
-        htmlEl.style.left = '0'
-        htmlEl.style.right = '0'
-        htmlEl.style.zIndex = '999'
+    if (outerRow) {
+      if (!isOpenMenu) {
+        outerRow.style.display = 'none'
       } else {
-        htmlEl.style.position = ''
-        htmlEl.style.left = ''
-        htmlEl.style.right = ''
-        htmlEl.style.zIndex = ''
+        outerRow.style.display = ''
+
+        if (!isHomePage) {
+          const headerHeight = headerWrapper ? headerWrapper.getBoundingClientRect().height : 0
+          outerRow.style.position = 'fixed'
+          outerRow.style.left = '0'
+          outerRow.style.right = '0'
+          outerRow.style.bottom = '0'
+          outerRow.style.top = `${headerHeight}px`
+          outerRow.style.zIndex = '999'
+          outerRow.style.background = '#fff'
+          outerRow.style.overflow = 'auto'
+        } else {
+          outerRow.style.position = ''
+          outerRow.style.left = ''
+          outerRow.style.right = ''
+          outerRow.style.bottom = ''
+          outerRow.style.top = ''
+          outerRow.style.zIndex = ''
+          outerRow.style.background = ''
+          outerRow.style.overflow = ''
+        }
       }
-    })
+    }
+
+    if (contentRow && !isHomePage) {
+      contentRow.style.height = isOpenMenu ? 'auto' : ''
+    } else if (contentRow) {
+      contentRow.style.height = ''
+    }
 
     const bannerCols = document.querySelectorAll('[class*="bannerCol"]')
 
@@ -158,7 +179,6 @@ const HorizontalMenu: FC<InjectedIntlProps> = observer(({ intl }) => {
           'absolute left-0 bw1 bb b--muted-3 flex'
         )}
         ref={navRef}
-        style={{ background: '#00FF00' }}
       >
         <ul
           className={classNames(
