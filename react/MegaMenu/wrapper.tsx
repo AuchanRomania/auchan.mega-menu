@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react'
 import { useQuery } from 'react-apollo'
 import { useDevice } from 'vtex.device-detector'
-import { canUseDOM } from 'vtex.render-runtime'
+import { canUseDOM, useRuntime } from 'vtex.render-runtime'
 import { Spinner } from 'vtex.styleguide'
 import classNames from 'classnames'
 
@@ -26,9 +26,11 @@ const Wrapper: StorefrontFunctionComponent<MegaMenuProps> = (props) => {
     },
   })
 
-  const { setDepartments, setConfig } = megaMenuState
+  const { setDepartments, setConfig, openMenu, setIsHomePage } = megaMenuState
 
   const { isMobile } = useDevice()
+  const runtime = useRuntime()
+  const isHomePage = runtime?.route?.id === 'store.home'
 
   const currentOrientation: Orientation =
     orientation ?? (isMobile ? 'vertical' : 'horizontal')
@@ -63,6 +65,11 @@ const Wrapper: StorefrontFunctionComponent<MegaMenuProps> = (props) => {
       console.error('Error mega menu get menus', error)
     }
   }, [error])
+
+  useEffect(() => {
+    setIsHomePage(isHomePage)
+    openMenu(isHomePage)
+  }, [isHomePage])
 
   if (isMobile && !loaded) {
     return (

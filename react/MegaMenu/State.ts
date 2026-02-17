@@ -8,7 +8,8 @@ class MegaMenuState {
   public config: GlobalConfig = {}
   public departments: MenuItem[] = []
   public departmentActive: MenuItem | null = null
-  public isOpenMenu = true
+  public isOpenMenu = false
+  public isHomePage = false
 
   constructor() {
     makeAutoObservable(this)
@@ -22,6 +23,10 @@ class MegaMenuState {
     this.departments = departments
   }
 
+  public setIsHomePage = (value: boolean) => {
+    this.isHomePage = value
+  }
+
   public setDepartmentActive = (department: MenuItem | null) => {
     this.departmentActive = department
   }
@@ -33,8 +38,6 @@ class MegaMenuState {
       this.isOpenMenu = value(this.isOpenMenu)
     }
 
-    // Cand se inchide meniul, reseteaza categoria activa
-    // ca la redeschidere sa apara doar lista de categorii
     if (!this.isOpenMenu) {
       this.departmentActive = null
     }

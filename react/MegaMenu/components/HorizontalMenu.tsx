@@ -29,6 +29,7 @@ const HorizontalMenu: FC<InjectedIntlProps> = observer(({ intl }) => {
   const { handles } = useCssHandles(CSS_HANDLES)
   const {
     isOpenMenu,
+    isHomePage,
     departments,
     departmentActive,
     config: { title, defaultDepartmentActive },
@@ -38,6 +39,35 @@ const HorizontalMenu: FC<InjectedIntlProps> = observer(({ intl }) => {
 
   const departmentActiveHasCategories = !!departmentActive?.menu?.length
   const navRef = useRef<HTMLDivElement>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const allContainers = document.querySelectorAll('[class*="megaMenuContainer"]')
+
+    allContainers.forEach((el) => {
+      const htmlEl = el as HTMLElement
+
+      htmlEl.style.display = isOpenMenu ? '' : 'none'
+
+      if (!isHomePage && isOpenMenu) {
+        htmlEl.style.position = 'absolute'
+        htmlEl.style.left = '0'
+        htmlEl.style.right = '0'
+        htmlEl.style.zIndex = '999'
+      } else {
+        htmlEl.style.position = ''
+        htmlEl.style.left = ''
+        htmlEl.style.right = ''
+        htmlEl.style.zIndex = ''
+      }
+    })
+
+    const bannerCols = document.querySelectorAll('[class*="bannerCol"]')
+
+    bannerCols.forEach((el) => {
+      ;(el as HTMLElement).style.display = isHomePage ? '' : 'none'
+    })
+  }, [isOpenMenu, isHomePage])
 
   const debouncedHandleMouseEnter = useCallback(
     _debounce((department: MenuItem | null) => {
@@ -121,7 +151,7 @@ const HorizontalMenu: FC<InjectedIntlProps> = observer(({ intl }) => {
   }, [])
 
   return departmentItems?.length > 0 ? (
-    <div style={{ display: isOpenMenu ? 'block' : 'none' }}>
+    <div ref={containerRef} style={{ display: isOpenMenu ? 'block' : 'none' }}>
       <nav
         className={classNames(
           handles.menuContainerNav,
