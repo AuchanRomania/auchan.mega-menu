@@ -1317,8 +1317,7 @@ const FormComponent: FC<FormComponentProps & InjectedIntlProps> = (props) => {
                 }
               />
             </div>
-          </div>
-          <div>
+            <div>
             <div className="t-heading-5  mb4">
               {messageTranslate('titleSubBlock')}
             </div>
@@ -1345,6 +1344,7 @@ const FormComponent: FC<FormComponentProps & InjectedIntlProps> = (props) => {
               />
             </div>
           </div>
+        </div>
         </PageBlock>
       </Layout>
       <FloatingActionBar
