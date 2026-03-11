@@ -75,15 +75,15 @@
   margin-left: 0.625rem;
   font-size: 1.0625rem;
   line-height: 1.625rem;
-  font-weight: 500;
-  color: #032949;
+  font-weight: 700;
+  color: #007b4d;
 }
 
 .triggerButtonIcon {
   display: block;
   width: 1.5625rem;
   height: 1.5625rem;
-  color: #3c617f;
+  color: #007b4d;
 }
 
 .menuItem {
