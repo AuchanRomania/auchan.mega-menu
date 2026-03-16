@@ -243,18 +243,23 @@
   line-height: 18px;
 }
 
-.menuContainer::-webkit-scrollbar-track,
+.menuContainer {
+  scrollbar-width: none;
+}
+
+.menuContainer::-webkit-scrollbar {
+  display: none;
+}
+
 .submenuItemsContainer::-webkit-scrollbar-track {
   background-color: #f0f0f0;
   border-radius: 0.625rem;
 }
 
-.menuContainer::-webkit-scrollbar,
 .submenuItemsContainer::-webkit-scrollbar {
   width: 0.625rem;
 }
 
-.menuContainer::-webkit-scrollbar-thumb,
 .submenuItemsContainer::-webkit-scrollbar-thumb {
   border-radius: 0.625rem;
   background-color: #fff;
