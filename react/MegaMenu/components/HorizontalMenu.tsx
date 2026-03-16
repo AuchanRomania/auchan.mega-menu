@@ -14,7 +14,7 @@ import { megaMenuState } from '../State'
 import styles from '../styles.css'
 import Item from './Item'
 import Submenu from './Submenu'
-// BUTTON_ID no longer needed - handleClickOutside removed
+import { BUTTON_ID } from './TriggerButton'
 
 const CSS_HANDLES = [
   'menuContainer',
@@ -101,7 +101,38 @@ const HorizontalMenu: FC<InjectedIntlProps> = observer(({ intl }) => {
     debouncedHandleMouseEnter.cancel()
   }
 
-  // handleClickOutside removed - menu stays open, toggled only by button
+  const handleNavMouseLeave = () => {
+    debouncedHandleMouseEnter.cancel()
+    setDepartmentActive(null)
+  }
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (!megaMenuState.isOpenMenu) return
+
+      const target = e.target as HTMLElement
+
+      if (containerRef.current?.contains(target)) return
+
+      const triggerBtn = document.querySelector(
+        `[data-id="${BUTTON_ID}"]`
+      )
+
+      if (triggerBtn?.contains(target)) return
+
+      if (megaMenuState.isHomePage) {
+        megaMenuState.setDepartmentActive(null)
+      } else {
+        megaMenuState.openMenu(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [])
 
   useEffect(() => {
     const defaultDepartment = departments.find(
@@ -179,6 +210,7 @@ const HorizontalMenu: FC<InjectedIntlProps> = observer(({ intl }) => {
           'absolute left-0 bw1 bb b--muted-3 flex'
         )}
         ref={navRef}
+        onMouseLeave={handleNavMouseLeave}
       >
         <ul
           className={classNames(
