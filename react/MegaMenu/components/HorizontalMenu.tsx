@@ -47,23 +47,37 @@ const HorizontalMenu: FC<InjectedIntlProps> = observer(({ intl }) => {
     const headerWrapper =
       (document.querySelector('[class*="wrapper--headerDesktop"]') as HTMLElement) ??
       (document.querySelector('[class*="stickyLayout--headerDesktop"]') as HTMLElement)
+    const headerSecondaryRow =
+      (document.querySelector('[class*="flexRow--headerDesktopSecondary"]') as HTMLElement) ??
+      (document.querySelector('[class*="flexRowContent--headerDesktopSecondary"]') as HTMLElement)
 
     if (outerRow) {
       if (!isOpenMenu) {
         outerRow.style.display = 'none'
+        if (headerWrapper) {
+          headerWrapper.style.boxShadow = ''
+        }
       } else {
         outerRow.style.display = ''
-
         if (!isHomePage) {
-          const headerHeight = headerWrapper ? headerWrapper.getBoundingClientRect().height : 0
+          const headerBottom = headerSecondaryRow
+            ? headerSecondaryRow.getBoundingClientRect().bottom
+            : headerWrapper
+              ? headerWrapper.getBoundingClientRect().bottom
+              : 0
+          const nonHomeOffset = 12
+          // Non-home: only side menu over page content (no banner)
           outerRow.style.position = 'fixed'
           outerRow.style.left = '0'
           outerRow.style.right = '0'
-          outerRow.style.bottom = '0'
-          outerRow.style.top = `${headerHeight}px`
-          outerRow.style.zIndex = '999'
-          outerRow.style.background = '#fff'
-          outerRow.style.overflow = 'auto'
+          outerRow.style.bottom = ''
+          outerRow.style.top = `${Math.max(0, Math.round(headerBottom) + nonHomeOffset)}px`
+          outerRow.style.zIndex = '9999'
+          outerRow.style.background = 'transparent'
+          outerRow.style.overflow = 'visible'
+          if (headerWrapper) {
+            headerWrapper.style.boxShadow = 'none'
+          }
         } else {
           outerRow.style.position = ''
           outerRow.style.left = ''
@@ -73,6 +87,9 @@ const HorizontalMenu: FC<InjectedIntlProps> = observer(({ intl }) => {
           outerRow.style.zIndex = ''
           outerRow.style.background = ''
           outerRow.style.overflow = ''
+          if (headerWrapper) {
+            headerWrapper.style.boxShadow = ''
+          }
         }
       }
     }
