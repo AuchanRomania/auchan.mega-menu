@@ -57,6 +57,11 @@ const HorizontalMenu: FC<InjectedIntlProps> = observer(({ intl }) => {
         if (headerWrapper) {
           headerWrapper.style.boxShadow = ''
         }
+        if (navRef.current) {
+          navRef.current.style.removeProperty('box-shadow')
+          navRef.current.style.removeProperty('border-top')
+          navRef.current.style.removeProperty('background')
+        }
       } else {
         outerRow.style.display = ''
         if (!isHomePage) {
@@ -76,7 +81,12 @@ const HorizontalMenu: FC<InjectedIntlProps> = observer(({ intl }) => {
           outerRow.style.background = 'transparent'
           outerRow.style.overflow = 'visible'
           if (headerWrapper) {
-            headerWrapper.style.boxShadow = 'none'
+            headerWrapper.style.boxShadow = ''
+          }
+          if (navRef.current) {
+            navRef.current.style.setProperty('background', '#fafafa', 'important')
+            navRef.current.style.setProperty('box-shadow', 'none', 'important')
+            navRef.current.style.setProperty('border-top', '1px solid #fafafa', 'important')
           }
         } else {
           outerRow.style.position = ''
@@ -89,6 +99,11 @@ const HorizontalMenu: FC<InjectedIntlProps> = observer(({ intl }) => {
           outerRow.style.overflow = ''
           if (headerWrapper) {
             headerWrapper.style.boxShadow = ''
+          }
+          if (navRef.current) {
+            navRef.current.style.removeProperty('box-shadow')
+            navRef.current.style.removeProperty('border-top')
+            navRef.current.style.removeProperty('background')
           }
         }
       }
