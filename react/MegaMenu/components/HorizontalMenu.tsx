@@ -85,7 +85,11 @@ const HorizontalMenu: FC<InjectedIntlProps> = observer(({ intl }) => {
           }
           if (navRef.current) {
             navRef.current.style.setProperty('background', '#fafafa', 'important')
-            navRef.current.style.setProperty('box-shadow', 'none', 'important')
+            navRef.current.style.setProperty(
+              'box-shadow',
+              '-8px 0 16px -12px rgba(0, 0, 0, 0.22), 8px 0 16px -12px rgba(0, 0, 0, 0.22)',
+              'important'
+            )
             navRef.current.style.setProperty('border-top', '1px solid #fafafa', 'important')
           }
         } else {
