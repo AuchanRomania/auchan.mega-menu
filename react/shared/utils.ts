@@ -1,3 +1,22 @@
+import type { MenuItem } from './types'
+
+/** Hide Promotii from desktop mega nav and from the mobile "Produse" sub-list only; data may remain in CMS. */
+export function isPromotiiMegaMenuDepartment(d: MenuItem) {
+  const slug = (d.slug || '').toLowerCase().trim()
+
+  if (
+    slug === '/promotii' ||
+    slug === '/promotii/c' ||
+    slug.startsWith('/promotii/')
+  ) {
+    return true
+  }
+
+  const name = (d.name || '').toLowerCase().trim()
+
+  return name === 'promotii' || name === 'promoții'
+}
+
 export function shortId() {
   let firstPart: string | number = (Math.random() * 46656) | 0
   let secondPart: string | number = (Math.random() * 46656) | 0

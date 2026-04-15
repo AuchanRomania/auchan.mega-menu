@@ -10,6 +10,7 @@ import { formatIOMessage } from 'vtex.native-types'
 import _debounce from 'lodash/debounce'
 
 import type { MenuItem } from '../../shared'
+import { isPromotiiMegaMenuDepartment } from '../../shared/utils'
 import { megaMenuState } from '../State'
 import styles from '../styles.css'
 import Item from './Item'
@@ -177,16 +178,26 @@ const HorizontalMenu: FC<InjectedIntlProps> = observer(({ intl }) => {
         defaultDepartmentActive?.toLowerCase().trim()
     )
 
-    if (defaultDepartment) {
+    if (defaultDepartment && !isPromotiiMegaMenuDepartment(defaultDepartment)) {
       setDepartmentActive(defaultDepartment)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [defaultDepartmentActive])
 
+  useEffect(() => {
+    if (
+      departmentActive &&
+      isPromotiiMegaMenuDepartment(departmentActive)
+    ) {
+      setDepartmentActive(null)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [departments, departmentActive])
+
   const departmentItems = useMemo(
     () =>
       departments
-        .filter((j) => j.display)
+        .filter((j) => j.display && !isPromotiiMegaMenuDepartment(j))
         .map((d) => {
           const hasCategories = !!d.menu?.length
 

@@ -13,6 +13,7 @@ import { IconCaret } from 'vtex.store-icons'
 import { Collapsible } from 'vtex.styleguide'
 
 import type { MenuItem } from '../../shared'
+import { isPromotiiMegaMenuDepartment } from '../../shared/utils'
 import { megaMenuState } from '../State'
 import Item from './Item'
 
@@ -105,10 +106,11 @@ const VerticalMenu: FC<VerticalMenuProps> = observer(({ intl }) => {
     []
   )
 
+  /* Under "Produse" only: hide Promotii (top-level Promotii tab stays in departmentsContainer). */
   const departmentItems = useMemo(
     () =>
       departments
-        .filter((d) => d.display)
+        .filter((d) => d.display && !isPromotiiMegaMenuDepartment(d))
         .map((d, i) => {
           const hasCategories = !!d.menu?.length
           const isExpanded = expandedDeptId === d.id
