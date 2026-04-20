@@ -205,6 +205,14 @@
   margin: 0.4375rem 0;
 }
 
+.submenuVerticalNameContainer .collapsibleHeaderText {
+  min-width: 0;
+  flex: 1 1 auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .submenuItemVertical {
   border: unset;
   margin-bottom: 0;
@@ -307,6 +315,15 @@
 
 .styledLinkText {
   align-items: center;
+}
+
+/* Titlu categorie lângă icon: trunchiere cu … când nu încape în coloană */
+.styledLinkTextLabel {
+  min-width: 0;
+  flex: 1 1 auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .submenuListVertical {

@@ -15,6 +15,7 @@ const CSS_HANDLES = [
   'styledLinkContainer',
   'styledLinkContent',
   'styledLinkText',
+  'styledLinkTextLabel',
   'accordionIconContainer',
   'accordionIcon',
   'menuItemIcon',
@@ -126,7 +127,7 @@ const Item: FC<ItemProps> = observer((props) => {
             <img className={handles.menuItemIcon} src={uploadedIcon} alt="" />
           </>
         )}
-        {children}
+        <span className={handles.styledLinkTextLabel}>{children}</span>
         {optionalText && level === 3 && (
           <>
             <span className={handles.menuItemBadge}>{optionalText}</span>
