@@ -98,6 +98,11 @@ const mobileLinkRootStyle: CSSProperties = {
   width: '100%',
 }
 
+/** 12px deasupra „Vezi toate produsele” (fără combinator CSS — Builder Hub) */
+const seeAllLinkContainerSpacingStyle: CSSProperties = {
+  marginTop: 12,
+}
+
 const ACCOUNT_MENU_ITEMS = [
   { label: 'Profil', href: '/account#/profile' },
   { label: 'Adrese', href: '/account#/addresses' },
@@ -247,6 +252,7 @@ const VerticalMenu: FC<VerticalMenuProps> = observer(({ intl }) => {
                                         handles.seeAllLinkContainer,
                                         't-body'
                                       )}
+                                      style={seeAllLinkContainerSpacingStyle}
                                     >
                                       <Link
                                         to={
