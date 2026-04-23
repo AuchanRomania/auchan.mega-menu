@@ -320,7 +320,8 @@
 /* Titlu categorie lângă icon: trunchiere cu … când nu încape în coloană */
 .styledLinkTextLabel {
   min-width: 0;
-  flex: 1 1 auto;
+  flex: 0 1 auto;
+  text-align: left;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -348,9 +349,7 @@
   order: 2;
 }
 
-.menuItemVertical .accordionIconContainer {
-  display: none;
-}
+/* Nu ascunde săgeata pe rândurile Cont / Produse (menuItemVertical) — layout inline în React */
 
 .submenuItemVertical--isOpen div[role='region'] {
   display: flex;
@@ -454,5 +453,35 @@
     font-size: 0.9375rem;
     line-height: 1.125rem;
     color: #ed002e;
+  }
+
+  /*
+   * Drawer meniu mobil: selectori atribut — bate CSS-ul Tachyons / tema dacă e încărcat în altă ordine.
+   * Figma 759-29338 (Cont), 759-29352 (Produse).
+   */
+  :global([class*='childrenContainer--menuMobile']) :global([class*='styledLinkContent']) {
+    justify-content: flex-start !important;
+  }
+
+  :global([class*='childrenContainer--menuMobile']) :global([class*='styledLinkText']) {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+    justify-content: flex-start !important;
+    text-align: left !important;
+  }
+
+  :global([class*='childrenContainer--menuMobile']) :global([class*='styledLinkTextLabel']) {
+    flex: 0 1 auto !important;
+    text-align: left !important;
+  }
+
+  :global([class*='childrenContainer--menuMobile']) :global([class*='accordionIconContainer']) {
+    display: flex !important;
+    margin-left: auto !important;
+    flex-shrink: 0 !important;
+  }
+
+  :global([class*='childrenContainer--menuMobile']) :global([class*='styledLink']) {
+    text-align: left !important;
   }
 }

@@ -28,6 +28,45 @@ const defaultTypography: Record<number, string> = {
   3: 't-body',
 }
 
+/** Rând mobil (Figma 759-29338 / 759-29352): forțează icon + text la stânga, săgeată la dreapta */
+const styledLinkRowStyle: React.CSSProperties = {
+  display: 'flex',
+  flexDirection: 'row',
+  alignItems: 'center',
+  justifyContent: 'flex-start',
+  gap: 12,
+  width: '100%',
+}
+
+const styledLinkTextClusterStyle: React.CSSProperties = {
+  display: 'flex',
+  flexDirection: 'row',
+  alignItems: 'center',
+  justifyContent: 'flex-start',
+  flex: '1 1 auto',
+  minWidth: 0,
+  gap: 12,
+  textAlign: 'left',
+}
+
+const styledLinkLabelStyle: React.CSSProperties = {
+  flex: '0 1 auto',
+  minWidth: 0,
+  textAlign: 'left',
+}
+
+const accordionClusterStyle: React.CSSProperties = {
+  display: 'flex',
+  marginLeft: 'auto',
+  flexShrink: 0,
+}
+
+/** Butonul / link-ul VTEX pot moșteni text-align: center */
+const styledLinkRootStyle: React.CSSProperties = {
+  textAlign: 'left',
+  width: '100%',
+}
+
 const Item: FC<ItemProps> = observer((props) => {
   const { handles, withModifiers } = useCssHandles(CSS_HANDLES)
   const { departmentActive, config, setDepartmentActive } = megaMenuState
@@ -111,7 +150,8 @@ const Item: FC<ItemProps> = observer((props) => {
 
   const content = (
     <div
-      className={classNames(handles.styledLinkContent, 'flex justify-between')}
+      className={classNames(handles.styledLinkContent, 'flex')}
+      style={styledLinkRowStyle}
     >
       <div
         className={classNames(
@@ -119,7 +159,11 @@ const Item: FC<ItemProps> = observer((props) => {
           'flex items-center',
           iconPosition === 'left' && iconComponent && 'nowrap'
         )}
-        {...(enableStyle && { style: stylesItem })}
+        style={
+          enableStyle
+            ? { ...stylesItem, ...styledLinkTextClusterStyle }
+            : styledLinkTextClusterStyle
+        }
       >
         {iconPosition === 'left' && iconComponent}
         {uploadedIcon && level < 3 && (
@@ -127,7 +171,12 @@ const Item: FC<ItemProps> = observer((props) => {
             <img className={handles.menuItemIcon} src={uploadedIcon} alt="" />
           </>
         )}
-        <span className={handles.styledLinkTextLabel}>{children}</span>
+        <span
+          className={handles.styledLinkTextLabel}
+          style={styledLinkLabelStyle}
+        >
+          {children}
+        </span>
         {optionalText && level === 3 && (
           <>
             <span className={handles.menuItemBadge}>{optionalText}</span>
@@ -140,7 +189,8 @@ const Item: FC<ItemProps> = observer((props) => {
           className={`${withModifiers(
             'accordionIconContainer',
             isOpen ? 'isOpen' : 'isClosed'
-          )} ml1 c-muted-3`}
+          )} c-muted-3`}
+          style={accordionClusterStyle}
         >
           <IconCaret classNames={handles.accordionIcon} orientation="right" />
         </div>
@@ -156,15 +206,20 @@ const Item: FC<ItemProps> = observer((props) => {
     >
       {disabled || !hasLink ? (
         onClick ? (
-          <button className={linkClassNames}>{content}</button>
+          <button className={linkClassNames} style={styledLinkRootStyle}>
+            {content}
+          </button>
         ) : (
-          <span className={linkClassNames}>{content}</span>
+          <span className={linkClassNames} style={styledLinkRootStyle}>
+            {content}
+          </span>
         )
       ) : (
         <Link
           to={isCollection ? to : `${to}/c`}
           {...rest}
           className={linkClassNames}
+          style={styledLinkRootStyle}
           onClick={() => {
             if (config.orientation === 'vertical') {
               setDepartmentActive(null)
