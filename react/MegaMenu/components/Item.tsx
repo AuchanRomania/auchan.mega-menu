@@ -61,6 +61,40 @@ const accordionClusterStyle: React.CSSProperties = {
   flexShrink: 0,
 }
 
+/** Rotație pe container (IconCaret poate să nu moștenească .accordionIcon pe SVG). Mobil: 20×20. */
+function getAccordionIconContainerStyle(
+  isOpen: boolean,
+  orientation: 'vertical' | 'horizontal'
+): React.CSSProperties {
+  const rotate = isOpen ? 'rotate(-90deg)' : 'rotate(90deg)'
+  const base: React.CSSProperties = {
+    ...accordionClusterStyle,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 20,
+    flexShrink: 0,
+    boxSizing: 'border-box',
+    transform: rotate,
+    transformOrigin: 'center center',
+    transition: 'transform 0.2s ease',
+  }
+
+  if (orientation === 'vertical') {
+    return {
+      ...base,
+      height: 20,
+      minHeight: 20,
+    }
+  }
+
+  return {
+    ...base,
+    minHeight: 44,
+    height: 44,
+  }
+}
+
 /** Butonul / link-ul VTEX pot moșteni text-align: center */
 const styledLinkRootStyle: React.CSSProperties = {
   textAlign: 'left',
@@ -70,6 +104,7 @@ const styledLinkRootStyle: React.CSSProperties = {
 const Item: FC<ItemProps> = observer((props) => {
   const { handles, withModifiers } = useCssHandles(CSS_HANDLES)
   const { departmentActive, config, setDepartmentActive } = megaMenuState
+  const menuOrientation = config.orientation ?? 'horizontal'
   const {
     id,
     to,
@@ -91,11 +126,15 @@ const Item: FC<ItemProps> = observer((props) => {
     uploadedIcon,
     optionalText,
     isCollection,
+    accordionExpanded,
     ...rest
   } = props
 
-  // Only for level 1
-  const isOpen = departmentActive?.id === id
+  /** Mobil: părintele ține expandedDeptId; desktop: departmentActive */
+  const isAccordionOpen =
+    accordionExpanded !== undefined
+      ? accordionExpanded
+      : departmentActive?.id === id
   const hasLink = to && to !== '#'
 
   const linkClassNames = classNames(
@@ -106,6 +145,15 @@ const Item: FC<ItemProps> = observer((props) => {
       'fw6 c-on-base': isTitle,
       pointer: !disabled && !isTitle,
     }
+  )
+
+  const accordionContainerStyle = useMemo(
+    () =>
+      getAccordionIconContainerStyle(
+        isAccordionOpen,
+        menuOrientation === 'vertical' ? 'vertical' : 'horizontal'
+      ),
+    [isAccordionOpen, menuOrientation]
   )
 
   const stylesItem = useMemo(() => {
@@ -188,9 +236,9 @@ const Item: FC<ItemProps> = observer((props) => {
         <div
           className={`${withModifiers(
             'accordionIconContainer',
-            isOpen ? 'isOpen' : 'isClosed'
+            isAccordionOpen ? 'isOpen' : 'isClosed'
           )} c-muted-3`}
-          style={accordionClusterStyle}
+          style={accordionContainerStyle}
         >
           <IconCaret classNames={handles.accordionIcon} orientation="right" />
         </div>
@@ -259,6 +307,8 @@ export interface ItemProps {
   isCollection?: boolean
   onClick?: () => void
   closeMenu?: (open: boolean) => void
+  /** Meniu vertical: suprascrie departmentActive pentru rotația săgeții */
+  accordionExpanded?: boolean
 }
 
 export default Item

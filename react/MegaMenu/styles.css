@@ -16,10 +16,6 @@
   outline: transparent;
 }
 
-.hideArrow svg {
-  display: none;
-}
-
 .departmentsTitle {
   display: none;
 }
@@ -477,8 +473,26 @@
 
   :global([class*='childrenContainer--menuMobile']) :global([class*='accordionIconContainer']) {
     display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
     margin-left: auto !important;
     flex-shrink: 0 !important;
+    width: 20px !important;
+    height: 20px !important;
+    min-height: 20px !important;
+    box-sizing: border-box !important;
+    transform-origin: center center !important;
+    transition: transform 0.2s ease !important;
+  }
+
+  :global([class*='childrenContainer--menuMobile'])
+    :global([class*='accordionIconContainer--isClosed']) {
+    transform: rotate(90deg) !important;
+  }
+
+  :global([class*='childrenContainer--menuMobile'])
+    :global([class*='accordionIconContainer--isOpen']) {
+    transform: rotate(-90deg) !important;
   }
 
   :global([class*='childrenContainer--menuMobile']) :global([class*='styledLink']) {

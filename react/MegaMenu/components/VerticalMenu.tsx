@@ -76,10 +76,21 @@ const mobileLabelStyle: CSSProperties = {
   textAlign: 'left',
 }
 
-const mobileChevronStyle: CSSProperties = {
-  display: 'flex',
-  marginLeft: 'auto',
-  flexShrink: 0,
+/** Meniu drawer mobil: rotație pe container — 20×20, Figma închis 90deg / deschis -90deg */
+function getMobileDrawerChevronStyle(isOpen: boolean): CSSProperties {
+  return {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginLeft: 'auto',
+    flexShrink: 0,
+    width: 20,
+    height: 20,
+    boxSizing: 'border-box',
+    transform: isOpen ? 'rotate(-90deg)' : 'rotate(90deg)',
+    transformOrigin: 'center center',
+    transition: 'transform 0.2s ease',
+  }
 }
 
 const mobileLinkRootStyle: CSSProperties = {
@@ -165,6 +176,7 @@ const VerticalMenu: FC<VerticalMenuProps> = observer(({ intl }) => {
                     id={d.id}
                     iconId={d.icon}
                     accordion
+                    accordionExpanded={isExpanded}
                     tabIndex={i}
                     onClick={() => toggleDepartment(d.id)}
                     style={d.styles}
@@ -384,7 +396,7 @@ const VerticalMenu: FC<VerticalMenuProps> = observer(({ intl }) => {
                   </div>
                   <div
                     className={classNames(handles.accordionIconContainer, isContOpen ? 'accordionIconContainer--isOpen' : 'accordionIconContainer--isClosed', 'c-muted-3')}
-                    style={mobileChevronStyle}
+                    style={getMobileDrawerChevronStyle(isContOpen)}
                   >
                     <IconCaret classNames={handles.accordionIcon} orientation="right" />
                   </div>
@@ -457,7 +469,7 @@ const VerticalMenu: FC<VerticalMenuProps> = observer(({ intl }) => {
                     </div>
                     <div
                       className={classNames(handles.accordionIconContainer, isProduseOpen ? 'accordionIconContainer--isOpen' : 'accordionIconContainer--isClosed', 'c-muted-3')}
-                      style={mobileChevronStyle}
+                      style={getMobileDrawerChevronStyle(isProduseOpen)}
                     >
                       <IconCaret classNames={handles.accordionIcon} orientation="right" />
                     </div>
