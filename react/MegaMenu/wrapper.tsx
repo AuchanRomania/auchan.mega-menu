@@ -26,7 +26,15 @@ const Wrapper: StorefrontFunctionComponent<MegaMenuProps> = (props) => {
     },
   })
 
-  const { setDepartments, setConfig, openMenu, setIsHomePage } = megaMenuState
+  const {
+    setDepartments,
+    setConfig,
+    openMenu,
+    setIsHomePage,
+    setHomeHeroMegaVisible,
+    setHomeMegaSuppressAutoOpen,
+    homeMegaSuppressAutoOpen,
+  } = megaMenuState
 
   const { isMobile } = useDevice()
   const runtime = useRuntime()
@@ -68,7 +76,17 @@ const Wrapper: StorefrontFunctionComponent<MegaMenuProps> = (props) => {
 
   useEffect(() => {
     setIsHomePage(isHomePage)
-    openMenu(isHomePage)
+    if (!isHomePage) {
+      setHomeMegaSuppressAutoOpen(false)
+      setHomeHeroMegaVisible(false)
+      openMenu(false)
+      return
+    }
+
+    setHomeHeroMegaVisible(true)
+    if (!homeMegaSuppressAutoOpen) {
+      openMenu(true)
+    }
   }, [isHomePage])
 
   if (isMobile && !loaded) {

@@ -31,6 +31,7 @@ const HorizontalMenu: FC<InjectedIntlProps> = observer(({ intl }) => {
   const {
     isOpenMenu,
     isHomePage,
+    isHomeHeroMegaVisible,
     departments,
     departmentActive,
     config: { title, defaultDepartmentActive },
@@ -38,9 +39,169 @@ const HorizontalMenu: FC<InjectedIntlProps> = observer(({ intl }) => {
     openMenu,
   } = megaMenuState
 
+  const homeHeroEmbeddedLayout = isHomePage && isHomeHeroMegaVisible
+
   const departmentActiveHasCategories = !!departmentActive?.menu?.length
   const navRef = useRef<HTMLDivElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
+
+  const heroDocBottomRef = useRef<number | null>(null)
+  const lastHeroEmbeddedVisibleRef = useRef<boolean | null>(null)
+  /** După închiderea automată la scroll, evită redeschiderea în aceeași „buclă” de layout (salt la scroll). */
+  const heroScrollReopenCooldownUntilRef = useRef(0)
+
+  useEffect(() => {
+    if (!isHomePage || typeof window === 'undefined') return
+    if (megaMenuState.config.orientation !== 'horizontal') return
+
+    const outerRow = document.querySelector(
+      '[class*="flexRow--megaMenuContainer"]'
+    ) as HTMLElement | null
+
+    if (!outerRow) return
+
+    /** Hero band considered past when its bottom is above this viewport offset (sticky header) */
+    const HEADER_CLEARANCE = 96
+    /** Scroll back up this far past the threshold before returning to embedded layout */
+    const SCROLL_UP_HYSTERESIS = 120
+    const LEAVE_EXTRA = 44
+
+    let raf = 0
+
+    const tick = () => {
+      const isOpen = megaMenuState.isOpenMenu
+      const scrollTop =
+        window.scrollY ||
+        document.documentElement.scrollTop ||
+        document.body.scrollTop ||
+        0
+
+      /** Sus în pagină: mereu banner + meniu deschise (nu depinde de heroDocBottomRef / cooldown). */
+      const TOP_FORCE_HERO_SCROLL_PX = 48
+      if (
+        megaMenuState.isHomePage &&
+        megaMenuState.config.orientation === 'horizontal' &&
+        !isOpen &&
+        scrollTop <= TOP_FORCE_HERO_SCROLL_PX
+      ) {
+        heroScrollReopenCooldownUntilRef.current = 0
+        megaMenuState.setHomeMegaSuppressAutoOpen(false)
+        megaMenuState.setHomeHeroMegaVisible(true)
+        megaMenuState.openMenu(true)
+        lastHeroEmbeddedVisibleRef.current = true
+        return
+      }
+
+      const pos = getComputedStyle(outerRow).position
+
+      /* Sus în pagină cu panoul încă fixed: revine hero-ul complet în flux (banner vizibil). */
+      if (
+        megaMenuState.isHomePage &&
+        megaMenuState.config.orientation === 'horizontal' &&
+        isOpen &&
+        scrollTop <= TOP_FORCE_HERO_SCROLL_PX &&
+        pos === 'fixed'
+      ) {
+        heroScrollReopenCooldownUntilRef.current = 0
+        megaMenuState.setHomeHeroMegaVisible(true)
+        lastHeroEmbeddedVisibleRef.current = true
+        return
+      }
+
+      let embeddedVisible: boolean
+      const wasEmbedded = lastHeroEmbeddedVisibleRef.current !== false
+
+      if (isOpen) {
+        if (pos !== 'fixed') {
+          const rect = outerRow.getBoundingClientRect()
+          heroDocBottomRef.current = rect.bottom + window.scrollY
+          const threshold = wasEmbedded
+            ? HEADER_CLEARANCE
+            : HEADER_CLEARANCE - LEAVE_EXTRA
+          embeddedVisible = rect.bottom > threshold
+        } else {
+          const bottomDoc = heroDocBottomRef.current
+          embeddedVisible =
+            bottomDoc != null &&
+            window.scrollY <
+              bottomDoc - HEADER_CLEARANCE - SCROLL_UP_HYSTERESIS
+        }
+      } else {
+        // Meniu închis: folosim ultimul bottom măsurat ca să știm când s-a făcut scroll sus înapoi în hero
+        const bottomDoc = heroDocBottomRef.current
+        embeddedVisible =
+          bottomDoc != null &&
+          window.scrollY <
+            bottomDoc - HEADER_CLEARANCE - SCROLL_UP_HYSTERESIS
+      }
+
+      const prevEmbedded = lastHeroEmbeddedVisibleRef.current
+
+      // Ieșire din hero: închidem (header + „Produse” rămân folosibile)
+      if (
+        megaMenuState.isHomePage &&
+        isOpen &&
+        prevEmbedded === true &&
+        embeddedVisible === false
+      ) {
+        megaMenuState.setHomeHeroMegaVisible(false)
+        megaMenuState.openMenu(false)
+        lastHeroEmbeddedVisibleRef.current = false
+        if (typeof performance !== 'undefined') {
+          heroScrollReopenCooldownUntilRef.current = performance.now() + 420
+        }
+        return
+      }
+
+      // Revenire sus în hero: readucem meniul + bannerul (fără click pe „Produse”)
+      if (
+        megaMenuState.isHomePage &&
+        !isOpen &&
+        prevEmbedded === false &&
+        embeddedVisible === true
+      ) {
+        if (
+          typeof performance !== 'undefined' &&
+          performance.now() < heroScrollReopenCooldownUntilRef.current
+        ) {
+          return
+        }
+        megaMenuState.setHomeMegaSuppressAutoOpen(false)
+        megaMenuState.setHomeHeroMegaVisible(true)
+        megaMenuState.openMenu(true)
+        lastHeroEmbeddedVisibleRef.current = true
+        return
+      }
+
+      if (prevEmbedded !== embeddedVisible) {
+        // Nu comuta la „embedded” în MobX cât timp panoul e încă fixed deschis — altfel innerRow iese din
+        // flow și pagina se rearanjează violent (scroll care „fuge”).
+        if (isOpen && embeddedVisible === true && pos === 'fixed') {
+          return
+        }
+        lastHeroEmbeddedVisibleRef.current = embeddedVisible
+        megaMenuState.setHomeHeroMegaVisible(embeddedVisible)
+      }
+    }
+
+    const schedule = () => {
+      cancelAnimationFrame(raf)
+      raf = requestAnimationFrame(() => {
+        raf = 0
+        tick()
+      })
+    }
+
+    schedule()
+    window.addEventListener('scroll', schedule, { passive: true })
+    window.addEventListener('resize', schedule)
+
+    return () => {
+      window.removeEventListener('scroll', schedule)
+      window.removeEventListener('resize', schedule)
+      cancelAnimationFrame(raf)
+    }
+  }, [isHomePage, megaMenuState.config.orientation])
 
   useEffect(() => {
     const outerRow = document.querySelector('[class*="flexRow--megaMenuContainer"]') as HTMLElement
@@ -59,13 +220,14 @@ const HorizontalMenu: FC<InjectedIntlProps> = observer(({ intl }) => {
           headerWrapper.style.boxShadow = ''
         }
         if (navRef.current) {
+          navRef.current.style.removeProperty('pointer-events')
           navRef.current.style.removeProperty('box-shadow')
           navRef.current.style.removeProperty('border-top')
           navRef.current.style.removeProperty('background')
         }
       } else {
         outerRow.style.display = ''
-        if (!isHomePage) {
+        if (!homeHeroEmbeddedLayout) {
           const headerBottom = headerSecondaryRow
             ? headerSecondaryRow.getBoundingClientRect().bottom
             : headerWrapper
@@ -78,13 +240,19 @@ const HorizontalMenu: FC<InjectedIntlProps> = observer(({ intl }) => {
           outerRow.style.right = '0'
           outerRow.style.bottom = ''
           outerRow.style.top = `${Math.max(0, Math.round(headerBottom) + nonHomeOffset)}px`
-          outerRow.style.zIndex = '9999'
+          /*
+           * Deasupra umbrei headerului (container sticky z-999). Z mai mare blochează clickurile
+           * pe zona acoperită de outerRow — folosim pointer-events: none pe rând și auto pe nav.
+           */
+          outerRow.style.zIndex = '1000'
+          outerRow.style.pointerEvents = 'none'
           outerRow.style.background = 'transparent'
           outerRow.style.overflow = 'visible'
           if (headerWrapper) {
             headerWrapper.style.boxShadow = ''
           }
           if (navRef.current) {
+            navRef.current.style.pointerEvents = 'auto'
             navRef.current.style.setProperty('background', '#fafafa', 'important')
             navRef.current.style.setProperty(
               'box-shadow',
@@ -100,12 +268,14 @@ const HorizontalMenu: FC<InjectedIntlProps> = observer(({ intl }) => {
           outerRow.style.bottom = ''
           outerRow.style.top = ''
           outerRow.style.zIndex = ''
+          outerRow.style.pointerEvents = ''
           outerRow.style.background = ''
           outerRow.style.overflow = ''
           if (headerWrapper) {
             headerWrapper.style.boxShadow = ''
           }
           if (navRef.current) {
+            navRef.current.style.removeProperty('pointer-events')
             navRef.current.style.removeProperty('box-shadow')
             navRef.current.style.removeProperty('border-top')
             navRef.current.style.removeProperty('background')
@@ -114,7 +284,7 @@ const HorizontalMenu: FC<InjectedIntlProps> = observer(({ intl }) => {
       }
     }
 
-    if (contentRow && !isHomePage) {
+    if (contentRow && !homeHeroEmbeddedLayout) {
       contentRow.style.height = isOpenMenu ? 'auto' : ''
     } else if (contentRow) {
       contentRow.style.height = ''
@@ -123,9 +293,9 @@ const HorizontalMenu: FC<InjectedIntlProps> = observer(({ intl }) => {
     const bannerCols = document.querySelectorAll('[class*="bannerCol"]')
 
     bannerCols.forEach((el) => {
-      ;(el as HTMLElement).style.display = isHomePage ? '' : 'none'
+      ;(el as HTMLElement).style.display = homeHeroEmbeddedLayout ? '' : 'none'
     })
-  }, [isOpenMenu, isHomePage])
+  }, [isOpenMenu, isHomePage, isHomeHeroMegaVisible])
 
   const debouncedHandleMouseEnter = useCallback(
     _debounce((department: MenuItem | null) => {
@@ -157,7 +327,10 @@ const HorizontalMenu: FC<InjectedIntlProps> = observer(({ intl }) => {
 
       if (triggerBtn?.contains(target)) return
 
-      if (megaMenuState.isHomePage) {
+      if (
+        megaMenuState.isHomePage &&
+        megaMenuState.isHomeHeroMegaVisible
+      ) {
         megaMenuState.setDepartmentActive(null)
       } else {
         megaMenuState.openMenu(false)
