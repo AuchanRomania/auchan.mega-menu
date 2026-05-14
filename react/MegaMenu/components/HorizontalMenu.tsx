@@ -138,11 +138,13 @@ const HorizontalMenu: FC<InjectedIntlProps> = observer(({ intl }) => {
       const prevEmbedded = lastHeroEmbeddedVisibleRef.current
 
       // Ieșire din hero: închidem (header + „Produse” rămân folosibile)
+      // `prevEmbedded === null` = primul tick după mount/refresh: dacă suntem deja sub hero
+      // (embeddedVisible false), trebuie să închidem — altfel rămâne isOpenMenu true + fixed peste pagină.
       if (
         megaMenuState.isHomePage &&
         isOpen &&
-        prevEmbedded === true &&
-        embeddedVisible === false
+        embeddedVisible === false &&
+        (prevEmbedded === true || prevEmbedded === null)
       ) {
         megaMenuState.setHomeHeroMegaVisible(false)
         megaMenuState.openMenu(false)
@@ -192,13 +194,23 @@ const HorizontalMenu: FC<InjectedIntlProps> = observer(({ intl }) => {
       })
     }
 
+    const onVisibility = () => {
+      if (document.visibilityState === 'visible') {
+        schedule()
+      }
+    }
+
     schedule()
     window.addEventListener('scroll', schedule, { passive: true })
     window.addEventListener('resize', schedule)
+    document.addEventListener('visibilitychange', onVisibility)
+    window.addEventListener('pageshow', schedule)
 
     return () => {
       window.removeEventListener('scroll', schedule)
       window.removeEventListener('resize', schedule)
+      document.removeEventListener('visibilitychange', onVisibility)
+      window.removeEventListener('pageshow', schedule)
       cancelAnimationFrame(raf)
     }
   }, [isHomePage, megaMenuState.config.orientation])
