@@ -49,6 +49,18 @@ const HorizontalMenu: FC<InjectedIntlProps> = observer(({ intl }) => {
   const lastHeroEmbeddedVisibleRef = useRef<boolean | null>(null)
   /** După închiderea automată la scroll, evită redeschiderea în aceeași „buclă” de layout (salt la scroll). */
   const heroScrollReopenCooldownUntilRef = useRef(0)
+  /**
+   * Marker pentru închiderea automată din scroll. Cât e activ, NU re-deschidem prin „top-force” (scrollY≤48):
+   * altfel, după colapsul rândului din flux, browser-ul ajunge la `scrollY` mic și am intra într-o buclă
+   * close → reopen → close. Se curăță când meniul e redeschis (prin „Produse” sau scroll-up).
+   */
+  const autoClosedOnScrollRef = useRef(false)
+
+  useEffect(() => {
+    if (isOpenMenu) {
+      autoClosedOnScrollRef.current = false
+    }
+  }, [isOpenMenu])
 
   useEffect(() => {
     if (!isHomePage || typeof window === 'undefined') return
@@ -76,13 +88,24 @@ const HorizontalMenu: FC<InjectedIntlProps> = observer(({ intl }) => {
         document.body.scrollTop ||
         0
 
-      /** Sus în pagină: mereu banner + meniu deschise (nu depinde de heroDocBottomRef / cooldown). */
+      /**
+       * Sus în pagină: banner + meniu deschise. Blocăm „top-force” dacă tocmai am auto-închis pe
+       * scroll: după închidere, rândul rămâne în flux pe home (vezi al doilea useEffect), deci nu
+       * mai trebuie să forțăm redeschiderea aici — calea normală `embeddedVisible` o face când
+       * utilizatorul urcă suficient. Cooldown-ul previne și un eventual flicker imediat după close.
+       */
       const TOP_FORCE_HERO_SCROLL_PX = 48
+      const now =
+        typeof performance !== 'undefined' ? performance.now() : 0
+      const inCloseCooldown =
+        now < heroScrollReopenCooldownUntilRef.current
       if (
         megaMenuState.isHomePage &&
         megaMenuState.config.orientation === 'horizontal' &&
         !isOpen &&
-        scrollTop <= TOP_FORCE_HERO_SCROLL_PX
+        scrollTop <= TOP_FORCE_HERO_SCROLL_PX &&
+        !inCloseCooldown &&
+        !autoClosedOnScrollRef.current
       ) {
         heroScrollReopenCooldownUntilRef.current = 0
         megaMenuState.setHomeMegaSuppressAutoOpen(false)
@@ -111,23 +134,24 @@ const HorizontalMenu: FC<InjectedIntlProps> = observer(({ intl }) => {
       let embeddedVisible: boolean
       const wasEmbedded = lastHeroEmbeddedVisibleRef.current !== false
 
-      if (isOpen) {
-        if (pos !== 'fixed') {
-          const rect = outerRow.getBoundingClientRect()
-          heroDocBottomRef.current = rect.bottom + window.scrollY
+      /**
+       * Rândul hero rămâne mereu în flux pe home (chiar și când e închis: efectul de stilare păstrează
+       * `display:''`), deci `rect.bottom` reflectă poziția reală a hero-ului în document indiferent de
+       * `isOpenMenu`. Singura excepție: fixed dropdown (după click pe „Produse” când scrolled past),
+       * caz în care folosim ultimul `bottomDoc` măsurat.
+       */
+      if (pos !== 'fixed') {
+        const rect = outerRow.getBoundingClientRect()
+        heroDocBottomRef.current = rect.bottom + window.scrollY
+        if (isOpen) {
           const threshold = wasEmbedded
             ? HEADER_CLEARANCE
             : HEADER_CLEARANCE - LEAVE_EXTRA
           embeddedVisible = rect.bottom > threshold
         } else {
-          const bottomDoc = heroDocBottomRef.current
-          embeddedVisible =
-            bottomDoc != null &&
-            window.scrollY <
-              bottomDoc - HEADER_CLEARANCE - SCROLL_UP_HYSTERESIS
+          embeddedVisible = rect.bottom > HEADER_CLEARANCE + SCROLL_UP_HYSTERESIS
         }
       } else {
-        // Meniu închis: folosim ultimul bottom măsurat ca să știm când s-a făcut scroll sus înapoi în hero
         const bottomDoc = heroDocBottomRef.current
         embeddedVisible =
           bottomDoc != null &&
@@ -146,6 +170,7 @@ const HorizontalMenu: FC<InjectedIntlProps> = observer(({ intl }) => {
         embeddedVisible === false &&
         (prevEmbedded === true || prevEmbedded === null)
       ) {
+        autoClosedOnScrollRef.current = true
         megaMenuState.setHomeHeroMegaVisible(false)
         megaMenuState.openMenu(false)
         lastHeroEmbeddedVisibleRef.current = false
@@ -227,7 +252,27 @@ const HorizontalMenu: FC<InjectedIntlProps> = observer(({ intl }) => {
 
     if (outerRow) {
       if (!isOpenMenu) {
-        outerRow.style.display = 'none'
+        /**
+         * Pe home page păstrăm rândul în flux la 754px chiar și când meniul e închis: hero-ul ocupă mereu
+         * partea de sus a documentului. Asta previne colapsul layout-ului la auto-close (scroll past) și
+         * implicit „saltul sus” cauzat de scroll-anchoring după ce browser-ul scade `scrollY` ca să
+         * păstreze conținutul vizibil. Banner-ul și meniul din interior sunt deja ascunse de React
+         * (containerRef are `display:none` când `!isOpenMenu`) + bucla `bannerCols` de mai jos.
+         */
+        if (isHomePage) {
+          outerRow.style.display = ''
+          outerRow.style.position = ''
+          outerRow.style.left = ''
+          outerRow.style.right = ''
+          outerRow.style.bottom = ''
+          outerRow.style.top = ''
+          outerRow.style.zIndex = ''
+          outerRow.style.pointerEvents = ''
+          outerRow.style.background = ''
+          outerRow.style.overflow = ''
+        } else {
+          outerRow.style.display = 'none'
+        }
         if (headerWrapper) {
           headerWrapper.style.boxShadow = ''
         }
