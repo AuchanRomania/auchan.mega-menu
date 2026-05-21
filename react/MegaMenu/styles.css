@@ -44,8 +44,10 @@
   overflow: auto;
 }
 
-.menuContainer {
-  max-height: 75vh;
+@media only screen and (max-width: 1025px) {
+  .menuContainer {
+    max-height: 75vh;
+  }
 }
 
 .submenuContainer {

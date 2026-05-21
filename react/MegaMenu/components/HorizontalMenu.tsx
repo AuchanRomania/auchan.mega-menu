@@ -491,14 +491,15 @@ const HorizontalMenu: FC<InjectedIntlProps> = observer(({ intl }) => {
       >
         <ul
           className={classNames(
+            handles.menuContainer,
             styles.menuContainer,
-            'list ma0 pa0 pb3 br b--muted-4'
+            'list ma0 pa0 br b--muted-4'
           )}
         >
           <div
             className={classNames(
               handles.departmentsTitle,
-              'f4 fw7 c-on-base lh-copy ma0 pv5 ph5'
+              'f4 fw7 c-on-base lh-copy ma0'
             )}
           >
             {formatIOMessage({ id: title, intl })}
