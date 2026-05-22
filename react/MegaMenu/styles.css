@@ -403,6 +403,14 @@
 }
 
 @media only screen and (max-width: 1025px) {
+  .menuContainerNavVertical,
+  .departmentsContainer,
+  .menuContainerVertical,
+  .accordionCategoriesContainer,
+  .submenuItemVertical {
+    box-shadow: none !important;
+  }
+
   .submenuContainerTitle {
     margin: 0 0 1.5rem;
     padding: 0 0 0 3rem;
