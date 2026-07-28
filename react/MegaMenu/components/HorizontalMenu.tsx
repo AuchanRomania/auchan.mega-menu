@@ -47,13 +47,7 @@ const HorizontalMenu: FC<InjectedIntlProps> = observer(({ intl }) => {
 
   const heroDocBottomRef = useRef<number | null>(null)
   const lastHeroEmbeddedVisibleRef = useRef<boolean | null>(null)
-  /** După închiderea automată la scroll, evită redeschiderea în aceeași „buclă” de layout (salt la scroll). */
   const heroScrollReopenCooldownUntilRef = useRef(0)
-  /**
-   * Marker pentru închiderea automată din scroll. Cât e activ, NU re-deschidem prin „top-force” (scrollY≤48):
-   * altfel, după colapsul rândului din flux, browser-ul ajunge la `scrollY` mic și am intra într-o buclă
-   * close → reopen → close. Se curăță când meniul e redeschis (prin „Produse” sau scroll-up).
-   */
   const autoClosedOnScrollRef = useRef(false)
 
   useEffect(() => {
@@ -72,9 +66,7 @@ const HorizontalMenu: FC<InjectedIntlProps> = observer(({ intl }) => {
 
     if (!outerRow) return
 
-    /** Hero band considered past when its bottom is above this viewport offset (sticky header) */
     const HEADER_CLEARANCE = 96
-    /** Scroll back up this far past the threshold before returning to embedded layout */
     const SCROLL_UP_HYSTERESIS = 120
     const LEAVE_EXTRA = 44
 
@@ -88,13 +80,7 @@ const HorizontalMenu: FC<InjectedIntlProps> = observer(({ intl }) => {
         document.body.scrollTop ||
         0
 
-      /**
-       * Sus în pagină: banner + meniu deschise. Blocăm „top-force” dacă tocmai am auto-închis pe
-       * scroll: după închidere, rândul rămâne în flux pe home (vezi al doilea useEffect), deci nu
-       * mai trebuie să forțăm redeschiderea aici — calea normală `embeddedVisible` o face când
-       * utilizatorul urcă suficient. Cooldown-ul previne și un eventual flicker imediat după close.
-       */
-      const TOP_FORCE_HERO_SCROLL_PX = 48
+     const TOP_FORCE_HERO_SCROLL_PX = 48
       const now =
         typeof performance !== 'undefined' ? performance.now() : 0
       const inCloseCooldown =
@@ -117,7 +103,6 @@ const HorizontalMenu: FC<InjectedIntlProps> = observer(({ intl }) => {
 
       const pos = getComputedStyle(outerRow).position
 
-      /* Sus în pagină cu panoul încă fixed: revine hero-ul complet în flux (banner vizibil). */
       if (
         megaMenuState.isHomePage &&
         megaMenuState.config.orientation === 'horizontal' &&
@@ -134,12 +119,6 @@ const HorizontalMenu: FC<InjectedIntlProps> = observer(({ intl }) => {
       let embeddedVisible: boolean
       const wasEmbedded = lastHeroEmbeddedVisibleRef.current !== false
 
-      /**
-       * Rândul hero rămâne mereu în flux pe home (chiar și când e închis: efectul de stilare păstrează
-       * `display:''`), deci `rect.bottom` reflectă poziția reală a hero-ului în document indiferent de
-       * `isOpenMenu`. Singura excepție: fixed dropdown (după click pe „Produse” când scrolled past),
-       * caz în care folosim ultimul `bottomDoc` măsurat.
-       */
       if (pos !== 'fixed') {
         const rect = outerRow.getBoundingClientRect()
         heroDocBottomRef.current = rect.bottom + window.scrollY
@@ -161,9 +140,6 @@ const HorizontalMenu: FC<InjectedIntlProps> = observer(({ intl }) => {
 
       const prevEmbedded = lastHeroEmbeddedVisibleRef.current
 
-      // Ieșire din hero: închidem (header + „Produse” rămân folosibile)
-      // `prevEmbedded === null` = primul tick după mount/refresh: dacă suntem deja sub hero
-      // (embeddedVisible false), trebuie să închidem — altfel rămâne isOpenMenu true + fixed peste pagină.
       if (
         megaMenuState.isHomePage &&
         isOpen &&
@@ -180,7 +156,6 @@ const HorizontalMenu: FC<InjectedIntlProps> = observer(({ intl }) => {
         return
       }
 
-      // Revenire sus în hero: readucem meniul + bannerul (fără click pe „Produse”)
       if (
         megaMenuState.isHomePage &&
         !isOpen &&
@@ -201,8 +176,6 @@ const HorizontalMenu: FC<InjectedIntlProps> = observer(({ intl }) => {
       }
 
       if (prevEmbedded !== embeddedVisible) {
-        // Nu comuta la „embedded” în MobX cât timp panoul e încă fixed deschis — altfel innerRow iese din
-        // flow și pagina se rearanjează violent (scroll care „fuge”).
         if (isOpen && embeddedVisible === true && pos === 'fixed') {
           return
         }
@@ -252,13 +225,6 @@ const HorizontalMenu: FC<InjectedIntlProps> = observer(({ intl }) => {
 
     if (outerRow) {
       if (!isOpenMenu) {
-        /**
-         * Pe home page păstrăm rândul în flux la 754px chiar și când meniul e închis: hero-ul ocupă mereu
-         * partea de sus a documentului. Asta previne colapsul layout-ului la auto-close (scroll past) și
-         * implicit „saltul sus” cauzat de scroll-anchoring după ce browser-ul scade `scrollY` ca să
-         * păstreze conținutul vizibil. Banner-ul și meniul din interior sunt deja ascunse de React
-         * (containerRef are `display:none` când `!isOpenMenu`) + bucla `bannerCols` de mai jos.
-         */
         if (isHomePage) {
           outerRow.style.display = ''
           outerRow.style.position = ''
@@ -273,14 +239,40 @@ const HorizontalMenu: FC<InjectedIntlProps> = observer(({ intl }) => {
         } else {
           outerRow.style.display = 'none'
         }
+        if (contentRow) {
+          contentRow.style.overflow = ''
+          contentRow.style.pointerEvents = ''
+        }
+        const menuCol = outerRow.querySelector(
+          '[class*="megaMenuCol"]'
+        ) as HTMLElement | null
+        if (menuCol) {
+          menuCol.style.pointerEvents = ''
+          menuCol.style.overflow = ''
+        }
+        const menuColChild = outerRow.querySelector(
+          '[class*="flexColChild--megaMenuCol"]'
+        ) as HTMLElement | null
+        if (menuColChild) {
+          menuColChild.style.pointerEvents = ''
+          menuColChild.style.overflow = ''
+        }
         if (headerWrapper) {
           headerWrapper.style.boxShadow = ''
         }
         if (navRef.current) {
           navRef.current.style.removeProperty('pointer-events')
+          navRef.current.style.removeProperty('overflow')
           navRef.current.style.removeProperty('box-shadow')
           navRef.current.style.removeProperty('border-top')
           navRef.current.style.removeProperty('background')
+          const submenuEl = navRef.current.querySelector(
+            '[class*="submenuContainer"]'
+          ) as HTMLElement | null
+          if (submenuEl) {
+            submenuEl.style.pointerEvents = ''
+            submenuEl.style.zIndex = ''
+          }
         }
       } else {
         outerRow.style.display = ''
@@ -290,33 +282,60 @@ const HorizontalMenu: FC<InjectedIntlProps> = observer(({ intl }) => {
             : headerWrapper
               ? headerWrapper.getBoundingClientRect().bottom
               : 0
-          const nonHomeOffset = 12
+          const nonHomeOffset = 0
           // Non-home: only side menu over page content (no banner)
           outerRow.style.position = 'fixed'
           outerRow.style.left = '0'
           outerRow.style.right = '0'
           outerRow.style.bottom = ''
           outerRow.style.top = `${Math.max(0, Math.round(headerBottom) + nonHomeOffset)}px`
-          /*
-           * Deasupra umbrei headerului (container sticky z-999). Z mai mare blochează clickurile
-           * pe zona acoperită de outerRow — folosim pointer-events: none pe rând și auto pe nav.
-           */
           outerRow.style.zIndex = '1000'
           outerRow.style.pointerEvents = 'none'
           outerRow.style.background = 'transparent'
           outerRow.style.overflow = 'visible'
+
+          if (contentRow) {
+            contentRow.style.overflow = 'visible'
+            contentRow.style.pointerEvents = 'none'
+          }
+
+          const menuCol = outerRow.querySelector(
+            '[class*="megaMenuCol"]'
+          ) as HTMLElement | null
+          if (menuCol) {
+            menuCol.style.pointerEvents = 'auto'
+            menuCol.style.overflow = 'visible'
+          }
+
+          const menuColChild = outerRow.querySelector(
+            '[class*="flexColChild--megaMenuCol"]'
+          ) as HTMLElement | null
+          if (menuColChild) {
+            menuColChild.style.pointerEvents = 'auto'
+            menuColChild.style.overflow = 'visible'
+          }
+
           if (headerWrapper) {
             headerWrapper.style.boxShadow = ''
           }
           if (navRef.current) {
             navRef.current.style.pointerEvents = 'auto'
+            navRef.current.style.overflow = 'visible'
             navRef.current.style.setProperty('background', '#fafafa', 'important')
             navRef.current.style.setProperty(
               'box-shadow',
-              '-8px 0 16px -12px rgba(0, 0, 0, 0.22), 8px 0 16px -12px rgba(0, 0, 0, 0.22)',
+              '-8px 4px 16px -4px rgba(0, 0, 0, 0.1), 8px 4px 16px -4px rgba(0, 0, 0, 0.1), 0 8px 16px -2px rgba(0, 0, 0, 0.08)',
               'important'
             )
-            navRef.current.style.setProperty('border-top', '1px solid #fafafa', 'important')
+            navRef.current.style.setProperty('border-top', '1px solid #f0f0f0', 'important')
+
+            const submenuEl = navRef.current.querySelector(
+              '[class*="submenuContainer"]'
+            ) as HTMLElement | null
+            if (submenuEl) {
+              submenuEl.style.pointerEvents = 'auto'
+              submenuEl.style.zIndex = '1001'
+            }
           }
         } else {
           outerRow.style.position = ''
@@ -328,14 +347,40 @@ const HorizontalMenu: FC<InjectedIntlProps> = observer(({ intl }) => {
           outerRow.style.pointerEvents = ''
           outerRow.style.background = ''
           outerRow.style.overflow = ''
+          if (contentRow) {
+            contentRow.style.overflow = ''
+            contentRow.style.pointerEvents = ''
+          }
+          const menuCol = outerRow.querySelector(
+            '[class*="megaMenuCol"]'
+          ) as HTMLElement | null
+          if (menuCol) {
+            menuCol.style.pointerEvents = ''
+            menuCol.style.overflow = ''
+          }
+          const menuColChild = outerRow.querySelector(
+            '[class*="flexColChild--megaMenuCol"]'
+          ) as HTMLElement | null
+          if (menuColChild) {
+            menuColChild.style.pointerEvents = ''
+            menuColChild.style.overflow = ''
+          }
           if (headerWrapper) {
             headerWrapper.style.boxShadow = ''
           }
           if (navRef.current) {
             navRef.current.style.removeProperty('pointer-events')
+            navRef.current.style.removeProperty('overflow')
             navRef.current.style.removeProperty('box-shadow')
             navRef.current.style.removeProperty('border-top')
             navRef.current.style.removeProperty('background')
+            const submenuEl = navRef.current.querySelector(
+              '[class*="submenuContainer"]'
+            ) as HTMLElement | null
+            if (submenuEl) {
+              submenuEl.style.pointerEvents = ''
+              submenuEl.style.zIndex = ''
+            }
           }
         }
       }
@@ -352,12 +397,12 @@ const HorizontalMenu: FC<InjectedIntlProps> = observer(({ intl }) => {
     bannerCols.forEach((el) => {
       ;(el as HTMLElement).style.display = homeHeroEmbeddedLayout ? '' : 'none'
     })
-  }, [isOpenMenu, isHomePage, isHomeHeroMegaVisible])
+  }, [isOpenMenu, isHomePage, isHomeHeroMegaVisible, departmentActive])
 
   const debouncedHandleMouseEnter = useCallback(
     _debounce((department: MenuItem | null) => {
       setDepartmentActive(department)
-    }, 400),
+    }, 120),
     []
   )
 
