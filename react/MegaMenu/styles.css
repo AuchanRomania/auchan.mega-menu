@@ -38,7 +38,7 @@
   width: 100%;
   border-bottom: unset;
   border-radius: 0 0 0.75rem 0.75rem;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .menuContainerNav::after {
