@@ -9,11 +9,25 @@
 }
 
 .styledLink,
-.goBackButton,
-.triggerContainer {
+.goBackButton {
   border: none;
   background: transparent;
   outline: transparent;
+}
+
+.triggerContainer {
+  background: transparent;
+  outline: transparent;
+}
+
+@media (min-width: 1026px) {
+  .triggerContainer {
+    border-style: solid !important;
+    border-color: #f0f0f0 !important;
+    border-width: 1px 1px 0 1px !important;
+    border-bottom: 0 !important;
+    border-radius: 4px 4px 0 0 !important;
+  }
 }
 
 .departmentsTitle {

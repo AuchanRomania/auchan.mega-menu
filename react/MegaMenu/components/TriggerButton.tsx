@@ -33,7 +33,11 @@ const TriggerButton: FC<TriggerButtonProps> = observer((props) => {
   return (
     <button
       data-id={BUTTON_ID}
-      className={classNames(styles.triggerContainer, 'pointer')}
+      className={classNames(
+        styles.triggerContainer,
+        applyModifiers(handles.triggerContainer, isOpenMenu ? 'open' : ''),
+        'pointer'
+      )}
       onClick={() => {
         // No-op only while the embedded home hero (banner + left column) is open and visible
         if (
