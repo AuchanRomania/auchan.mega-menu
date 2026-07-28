@@ -121,7 +121,7 @@
 }
 
 .menuItem .styledLinkText {
-  min-height: 2.75rem;
+  min-height: 0;
 }
 
 .menuItem .styledLinkContent {
@@ -305,10 +305,11 @@
 
 .menuItemIcon {
   display: block;
-  width: 2rem;
-  height: 2rem;
-  margin-right: 0.75rem;
+  width: 24px;
+  height: 24px;
+  margin-right: 0;
   object-fit: contain;
+  color: #121212;
 }
 
 .menuItemBadge {
