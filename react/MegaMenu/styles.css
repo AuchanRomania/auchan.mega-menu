@@ -121,13 +121,14 @@
 
 .departmentActive {
   background-color: #eef5fb;
+  border-radius: 8px;
 }
 
 .menuItem .styledLinkText,
 .submenuItem .styledLinkText {
-  font-size: 0.9375rem;
+  font-size: 15px;
   font-weight: 500;
-  line-height: 1.125rem;
+  line-height: 1.2;
 }
 
 .menuItem .styledLinkText {

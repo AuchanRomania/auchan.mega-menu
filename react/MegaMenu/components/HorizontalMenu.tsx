@@ -324,7 +324,7 @@ const HorizontalMenu: FC<InjectedIntlProps> = observer(({ intl }) => {
             navRef.current.style.setProperty('background', '#fafafa', 'important')
             navRef.current.style.setProperty(
               'box-shadow',
-              '-8px 4px 16px -4px rgba(0, 0, 0, 0.1), 8px 4px 16px -4px rgba(0, 0, 0, 0.1), 0 8px 16px -2px rgba(0, 0, 0, 0.08)',
+              '4px 4px 6.5px rgba(0, 0, 0, 0.07)',
               'important'
             )
             navRef.current.style.setProperty('border-top', '1px solid #f0f0f0', 'important')
@@ -480,8 +480,7 @@ const HorizontalMenu: FC<InjectedIntlProps> = observer(({ intl }) => {
             <li
               className={classNames(
                 handles.menuItem,
-                d.id === departmentActive?.id &&
-                  `bg-black-05 ${handles.departmentActive}`
+                d.id === departmentActive?.id && handles.departmentActive
               )}
               key={d.id}
               onMouseEnter={() => {
