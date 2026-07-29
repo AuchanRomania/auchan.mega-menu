@@ -22,11 +22,10 @@
 
 @media (min-width: 1026px) {
   .triggerContainer {
-    border-style: solid !important;
-    border-color: #f0f0f0 !important;
-    border-width: 1px 1px 0 1px !important;
-    border-bottom: 0 !important;
-    border-radius: 4px 4px 0 0 !important;
+    height: 48px !important;
+    min-height: 48px !important;
+    border: none !important;
+    border-radius: 8px !important;
   }
 }
 
@@ -83,18 +82,29 @@
   font-family: 'Sana Sans Alt', -apple-system, BlinkMacSystemFont, 'avenir next',
     avenir, 'helvetica neue', helvetica, ubuntu, roboto, noto, 'segoe ui', arial,
     sans-serif;
-  margin-left: 0.625rem;
+  margin-left: 0.75rem;
   font-size: 1.0625rem;
-  line-height: 1.625rem;
+  line-height: 1;
   font-weight: 700;
-  color: #007b4d;
+  letter-spacing: 0.085px;
+  color: inherit;
 }
 
 .triggerButtonIcon {
   display: block;
-  width: 1.5625rem;
-  height: 1.5625rem;
-  color: #007b4d;
+  width: 32px;
+  height: 32px;
+  color: inherit;
+}
+
+@media (min-width: 1026px) {
+  .triggerContainer {
+    height: 48px;
+  }
+
+  .triggerContainer::after {
+    margin-left: 12px;
+  }
 }
 
 .menuItem {
@@ -330,7 +340,6 @@
   align-items: center;
 }
 
-/* Titlu categorie lângă icon: trunchiere cu … când nu încape în coloană */
 .styledLinkTextLabel {
   min-width: 0;
   flex: 0 1 auto;
@@ -362,14 +371,11 @@
   order: 2;
 }
 
-/* Nu ascunde săgeata pe rândurile Cont / Produse (menuItemVertical) — layout inline în React */
-
 .submenuItemVertical--isOpen div[role='region'] {
   display: flex;
   flex-direction: column;
 }
 
-/* Force Collapsible header row to full width with justify-between */
 .submenuItemVertical > div {
   width: 100%;
   border: none;
@@ -431,7 +437,6 @@
     padding: 0 0 0 3rem;
   }
 
-  /* Collapsible caret icons - make them thin and light like department arrows */
   .submenuItemVertical :global(.vtex__icon-caret-down),
   .submenuItemVertical :global(.vtex__icon-caret-up) {
     display: block;
@@ -459,7 +464,6 @@
     background-position: center;
   }
 
-  /* Override Collapsible caret wrapper color to match department arrows */
   .submenuItemVertical > div > div[role='button'] > :global(.c-on-base),
   .submenuItemVertical > div > div[role='button'] > :global(.c-muted-2),
   .submenuItemVertical > div > div[role='button'] > :global(.c-muted-3) {
@@ -476,10 +480,6 @@
     color: #ed002e;
   }
 
-  /*
-   * Drawer meniu mobil: selectori atribut — bate CSS-ul Tachyons / tema dacă e încărcat în altă ordine.
-   * Figma 759-29338 (Cont), 759-29352 (Produse).
-   */
   :global([class*='childrenContainer--menuMobile']) :global([class*='styledLinkContent']) {
     justify-content: flex-start !important;
   }
