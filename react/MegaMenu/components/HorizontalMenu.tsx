@@ -57,6 +57,76 @@ const HorizontalMenu: FC<InjectedIntlProps> = observer(({ intl }) => {
   }, [isOpenMenu])
 
   useEffect(() => {
+    if (typeof window === 'undefined') return
+
+    const TOP_EPS = 1
+
+    const applyStack = () => {
+      const outerRow = document.querySelector(
+        '[class*="flexRow--megaMenuContainer"]'
+      ) as HTMLElement | null
+      if (!outerRow) return
+
+      const menuCol = outerRow.querySelector(
+        '[class*="megaMenuCol"]'
+      ) as HTMLElement | null
+      const menuColChild = outerRow.querySelector(
+        '[class*="flexColChild--megaMenuCol"]'
+      ) as HTMLElement | null
+      const nav = navRef.current
+      const scrollTop =
+        window.scrollY ||
+        document.documentElement.scrollTop ||
+        document.body.scrollTop ||
+        0
+      const isFixed = getComputedStyle(outerRow).position === 'fixed'
+      const overShadow =
+        isHomePage &&
+        isHomeHeroMegaVisible &&
+        isOpenMenu &&
+        !isFixed &&
+        scrollTop <= TOP_EPS
+      const z = overShadow ? '21' : '10'
+
+      if (menuCol) menuCol.style.zIndex = z
+      if (menuColChild) menuColChild.style.zIndex = z
+      if (nav) nav.style.zIndex = z
+    }
+
+    let raf = 0
+    const schedule = () => {
+      cancelAnimationFrame(raf)
+      raf = requestAnimationFrame(() => {
+        raf = 0
+        applyStack()
+      })
+    }
+
+    schedule()
+    window.addEventListener('scroll', schedule, { passive: true })
+    window.addEventListener('resize', schedule)
+
+    return () => {
+      window.removeEventListener('scroll', schedule)
+      window.removeEventListener('resize', schedule)
+      cancelAnimationFrame(raf)
+      const outerRow = document.querySelector(
+        '[class*="flexRow--megaMenuContainer"]'
+      ) as HTMLElement | null
+      if (!outerRow) return
+      const menuCol = outerRow.querySelector(
+        '[class*="megaMenuCol"]'
+      ) as HTMLElement | null
+      const menuColChild = outerRow.querySelector(
+        '[class*="flexColChild--megaMenuCol"]'
+      ) as HTMLElement | null
+      if (menuCol) menuCol.style.removeProperty('z-index')
+      if (menuColChild) menuColChild.style.removeProperty('z-index')
+      if (navRef.current) navRef.current.style.removeProperty('z-index')
+    }
+  }, [isHomePage, isHomeHeroMegaVisible, isOpenMenu])
+
+  useEffect(() => {
     if (!isHomePage || typeof window === 'undefined') return
     if (megaMenuState.config.orientation !== 'horizontal') return
 
@@ -249,6 +319,7 @@ const HorizontalMenu: FC<InjectedIntlProps> = observer(({ intl }) => {
         if (menuCol) {
           menuCol.style.pointerEvents = ''
           menuCol.style.overflow = ''
+          menuCol.style.removeProperty('z-index')
         }
         const menuColChild = outerRow.querySelector(
           '[class*="flexColChild--megaMenuCol"]'
@@ -256,6 +327,7 @@ const HorizontalMenu: FC<InjectedIntlProps> = observer(({ intl }) => {
         if (menuColChild) {
           menuColChild.style.pointerEvents = ''
           menuColChild.style.overflow = ''
+          menuColChild.style.removeProperty('z-index')
         }
         if (headerWrapper) {
           headerWrapper.style.boxShadow = ''
@@ -266,6 +338,7 @@ const HorizontalMenu: FC<InjectedIntlProps> = observer(({ intl }) => {
           navRef.current.style.removeProperty('box-shadow')
           navRef.current.style.removeProperty('border-top')
           navRef.current.style.removeProperty('background')
+          navRef.current.style.removeProperty('z-index')
           const submenuEl = navRef.current.querySelector(
             '[class*="submenuContainer"]'
           ) as HTMLElement | null
@@ -277,19 +350,18 @@ const HorizontalMenu: FC<InjectedIntlProps> = observer(({ intl }) => {
       } else {
         outerRow.style.display = ''
         if (!homeHeroEmbeddedLayout) {
-          const headerBottom = headerSecondaryRow
-            ? headerSecondaryRow.getBoundingClientRect().bottom
-            : headerWrapper
-              ? headerWrapper.getBoundingClientRect().bottom
+          const headerBottom = headerWrapper
+            ? headerWrapper.getBoundingClientRect().bottom
+            : headerSecondaryRow
+              ? headerSecondaryRow.getBoundingClientRect().bottom
               : 0
           const nonHomeOffset = 0
-          // Non-home: only side menu over page content (no banner)
           outerRow.style.position = 'fixed'
           outerRow.style.left = '0'
           outerRow.style.right = '0'
           outerRow.style.bottom = ''
           outerRow.style.top = `${Math.max(0, Math.round(headerBottom) + nonHomeOffset)}px`
-          outerRow.style.zIndex = '1000'
+          outerRow.style.zIndex = '15'
           outerRow.style.pointerEvents = 'none'
           outerRow.style.background = 'transparent'
           outerRow.style.overflow = 'visible'
@@ -334,7 +406,7 @@ const HorizontalMenu: FC<InjectedIntlProps> = observer(({ intl }) => {
             ) as HTMLElement | null
             if (submenuEl) {
               submenuEl.style.pointerEvents = 'auto'
-              submenuEl.style.zIndex = '1001'
+              submenuEl.style.zIndex = '16'
             }
           }
         } else {
@@ -351,12 +423,20 @@ const HorizontalMenu: FC<InjectedIntlProps> = observer(({ intl }) => {
             contentRow.style.overflow = ''
             contentRow.style.pointerEvents = ''
           }
+          const scrollTop =
+            window.scrollY ||
+            document.documentElement.scrollTop ||
+            document.body.scrollTop ||
+            0
+          const overShadow = scrollTop <= 1
+          const stackZ = overShadow ? '21' : '10'
           const menuCol = outerRow.querySelector(
             '[class*="megaMenuCol"]'
           ) as HTMLElement | null
           if (menuCol) {
             menuCol.style.pointerEvents = ''
             menuCol.style.overflow = ''
+            menuCol.style.zIndex = stackZ
           }
           const menuColChild = outerRow.querySelector(
             '[class*="flexColChild--megaMenuCol"]'
@@ -364,6 +444,7 @@ const HorizontalMenu: FC<InjectedIntlProps> = observer(({ intl }) => {
           if (menuColChild) {
             menuColChild.style.pointerEvents = ''
             menuColChild.style.overflow = ''
+            menuColChild.style.zIndex = stackZ
           }
           if (headerWrapper) {
             headerWrapper.style.boxShadow = ''
@@ -374,6 +455,7 @@ const HorizontalMenu: FC<InjectedIntlProps> = observer(({ intl }) => {
             navRef.current.style.removeProperty('box-shadow')
             navRef.current.style.removeProperty('border-top')
             navRef.current.style.removeProperty('background')
+            navRef.current.style.zIndex = stackZ
             const submenuEl = navRef.current.querySelector(
               '[class*="submenuContainer"]'
             ) as HTMLElement | null
