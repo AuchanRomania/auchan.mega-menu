@@ -49,6 +49,64 @@ const HorizontalMenu: FC<InjectedIntlProps> = observer(({ intl }) => {
   const lastHeroEmbeddedVisibleRef = useRef<boolean | null>(null)
   const heroScrollReopenCooldownUntilRef = useRef(0)
   const autoClosedOnScrollRef = useRef(false)
+  const fixedSpacerRef = useRef<HTMLDivElement | null>(null)
+
+  const removeFixedSpacer = () => {
+    const spacer = fixedSpacerRef.current
+    if (spacer?.parentNode) {
+      spacer.parentNode.removeChild(spacer)
+    }
+    fixedSpacerRef.current = null
+  }
+
+  const ensureFixedSpacer = (outerRow: HTMLElement) => {
+    if (fixedSpacerRef.current?.parentNode) return
+    const height = Math.max(outerRow.offsetHeight, outerRow.getBoundingClientRect().height, 1)
+    const spacer = document.createElement('div')
+    spacer.setAttribute('data-mega-menu-fixed-spacer', '1')
+    spacer.style.width = '100%'
+    spacer.style.height = `${Math.round(height)}px`
+    spacer.style.flexShrink = '0'
+    spacer.style.pointerEvents = 'none'
+    spacer.style.visibility = 'hidden'
+    outerRow.parentNode?.insertBefore(spacer, outerRow)
+    fixedSpacerRef.current = spacer
+  }
+
+  const getHeaderBottomPx = () => {
+    const triggerEl =
+      (document.querySelector(
+        `[data-id="${BUTTON_ID}"]`
+      ) as HTMLElement | null) ??
+      (document.querySelector(
+        '[class*="triggerContainer"]'
+      ) as HTMLElement | null)
+    if (triggerEl) {
+      return triggerEl.getBoundingClientRect().bottom
+    }
+    const headerSecondaryRow =
+      (document.querySelector(
+        '[class*="flexRow--headerDesktopSecondary"]'
+      ) as HTMLElement) ??
+      (document.querySelector(
+        '[class*="flexRowContent--headerDesktopSecondary"]'
+      ) as HTMLElement)
+    const headerWrapper =
+      (document.querySelector(
+        '[class*="wrapper--headerDesktop"]'
+      ) as HTMLElement) ??
+      (document.querySelector(
+        '[class*="stickyLayout--headerDesktop"]'
+      ) as HTMLElement)
+
+    if (headerSecondaryRow) {
+      return headerSecondaryRow.getBoundingClientRect().bottom
+    }
+    if (headerWrapper) {
+      return headerWrapper.getBoundingClientRect().bottom
+    }
+    return 0
+  }
 
   useEffect(() => {
     if (isOpenMenu) {
@@ -80,6 +138,12 @@ const HorizontalMenu: FC<InjectedIntlProps> = observer(({ intl }) => {
         document.body.scrollTop ||
         0
       const isFixed = getComputedStyle(outerRow).position === 'fixed'
+      if (isFixed && isOpenMenu) {
+        if (menuCol) menuCol.style.zIndex = '25'
+        if (menuColChild) menuColChild.style.zIndex = '25'
+        if (nav) nav.style.zIndex = '25'
+        return
+      }
       const overShadow =
         isHomePage &&
         isHomeHeroMegaVisible &&
@@ -284,34 +348,142 @@ const HorizontalMenu: FC<InjectedIntlProps> = observer(({ intl }) => {
   }, [isHomePage, megaMenuState.config.orientation])
 
   useEffect(() => {
-    const outerRow = document.querySelector('[class*="flexRow--megaMenuContainer"]') as HTMLElement
-    const contentRow = document.querySelector('[class*="flexRowContent--megaMenuContainer"]') as HTMLElement
+    const outerRow = document.querySelector(
+      '[class*="flexRow--megaMenuContainer"]'
+    ) as HTMLElement
+    const contentRow = document.querySelector(
+      '[class*="flexRowContent--megaMenuContainer"]'
+    ) as HTMLElement
     const headerWrapper =
-      (document.querySelector('[class*="wrapper--headerDesktop"]') as HTMLElement) ??
-      (document.querySelector('[class*="stickyLayout--headerDesktop"]') as HTMLElement)
-    const headerSecondaryRow =
-      (document.querySelector('[class*="flexRow--headerDesktopSecondary"]') as HTMLElement) ??
-      (document.querySelector('[class*="flexRowContent--headerDesktopSecondary"]') as HTMLElement)
+      (document.querySelector(
+        '[class*="wrapper--headerDesktop"]'
+      ) as HTMLElement) ??
+      (document.querySelector(
+        '[class*="stickyLayout--headerDesktop"]'
+      ) as HTMLElement)
+
+    const clearFixedOverlayStyles = () => {
+      if (!outerRow) return
+      outerRow.style.position = ''
+      outerRow.style.left = ''
+      outerRow.style.right = ''
+      outerRow.style.bottom = ''
+      outerRow.style.top = ''
+      outerRow.style.zIndex = ''
+      outerRow.style.pointerEvents = ''
+      outerRow.style.background = ''
+      outerRow.style.overflow = ''
+      removeFixedSpacer()
+    }
+
+    const applyFixedOverlay = () => {
+      if (!outerRow) return
+
+      const scrollYBefore =
+        window.scrollY ||
+        document.documentElement.scrollTop ||
+        document.body.scrollTop ||
+        0
+
+      if (isHomePage && getComputedStyle(outerRow).position !== 'fixed') {
+        ensureFixedSpacer(outerRow)
+      } else if (!isHomePage) {
+        removeFixedSpacer()
+      }
+
+      const headerBottom = getHeaderBottomPx()
+      outerRow.style.display = ''
+      outerRow.style.position = 'fixed'
+      outerRow.style.left = '0'
+      outerRow.style.right = '0'
+      outerRow.style.bottom = ''
+      outerRow.style.top = `${Math.max(0, Math.round(headerBottom))}px`
+      outerRow.style.zIndex = '25'
+      outerRow.style.pointerEvents = 'none'
+      outerRow.style.background = 'transparent'
+      outerRow.style.overflow = 'visible'
+
+      if (contentRow) {
+        contentRow.style.overflow = 'visible'
+        contentRow.style.pointerEvents = 'none'
+        contentRow.style.height = isOpenMenu ? 'auto' : ''
+      }
+
+      const menuCol = outerRow.querySelector(
+        '[class*="megaMenuCol"]'
+      ) as HTMLElement | null
+      if (menuCol) {
+        menuCol.style.pointerEvents = 'auto'
+        menuCol.style.overflow = 'visible'
+        menuCol.style.setProperty('margin-top', '0', 'important')
+        menuCol.style.zIndex = '25'
+      }
+
+      const menuColChild = outerRow.querySelector(
+        '[class*="flexColChild--megaMenuCol"]'
+      ) as HTMLElement | null
+      if (menuColChild) {
+        menuColChild.style.pointerEvents = 'auto'
+        menuColChild.style.overflow = 'visible'
+        menuColChild.style.zIndex = '25'
+      }
+
+      if (headerWrapper) {
+        headerWrapper.style.boxShadow = ''
+      }
+      if (navRef.current) {
+        navRef.current.style.pointerEvents = 'auto'
+        navRef.current.style.overflow = 'visible'
+        navRef.current.style.setProperty('margin-top', '0', 'important')
+        navRef.current.style.setProperty('background', '#fafafa', 'important')
+        navRef.current.style.setProperty(
+          'box-shadow',
+          '4px 4px 6.5px rgba(0, 0, 0, 0.07)',
+          'important'
+        )
+        navRef.current.style.setProperty(
+          'border-top',
+          '1px solid #f0f0f0',
+          'important'
+        )
+        navRef.current.style.zIndex = '25'
+
+        const listEl = navRef.current.querySelector(
+          '[class*="menuContainer"]'
+        ) as HTMLElement | null
+        if (listEl) {
+          listEl.scrollTop = 0
+        }
+
+        const submenuEl = navRef.current.querySelector(
+          '[class*="submenuContainer"]'
+        ) as HTMLElement | null
+        if (submenuEl) {
+          submenuEl.style.pointerEvents = 'auto'
+          submenuEl.style.zIndex = '26'
+        }
+      }
+
+      if (
+        (window.scrollY || document.documentElement.scrollTop || 0) !==
+        scrollYBefore
+      ) {
+        window.scrollTo(0, scrollYBefore)
+      }
+    }
 
     if (outerRow) {
       if (!isOpenMenu) {
+        clearFixedOverlayStyles()
         if (isHomePage) {
           outerRow.style.display = ''
-          outerRow.style.position = ''
-          outerRow.style.left = ''
-          outerRow.style.right = ''
-          outerRow.style.bottom = ''
-          outerRow.style.top = ''
-          outerRow.style.zIndex = ''
-          outerRow.style.pointerEvents = ''
-          outerRow.style.background = ''
-          outerRow.style.overflow = ''
         } else {
           outerRow.style.display = 'none'
         }
         if (contentRow) {
           contentRow.style.overflow = ''
           contentRow.style.pointerEvents = ''
+          contentRow.style.height = ''
         }
         const menuCol = outerRow.querySelector(
           '[class*="megaMenuCol"]'
@@ -320,6 +492,7 @@ const HorizontalMenu: FC<InjectedIntlProps> = observer(({ intl }) => {
           menuCol.style.pointerEvents = ''
           menuCol.style.overflow = ''
           menuCol.style.removeProperty('z-index')
+          menuCol.style.removeProperty('margin-top')
         }
         const menuColChild = outerRow.querySelector(
           '[class*="flexColChild--megaMenuCol"]'
@@ -339,6 +512,7 @@ const HorizontalMenu: FC<InjectedIntlProps> = observer(({ intl }) => {
           navRef.current.style.removeProperty('border-top')
           navRef.current.style.removeProperty('background')
           navRef.current.style.removeProperty('z-index')
+          navRef.current.style.removeProperty('margin-top')
           const submenuEl = navRef.current.querySelector(
             '[class*="submenuContainer"]'
           ) as HTMLElement | null
@@ -347,139 +521,97 @@ const HorizontalMenu: FC<InjectedIntlProps> = observer(({ intl }) => {
             submenuEl.style.zIndex = ''
           }
         }
+      } else if (!homeHeroEmbeddedLayout) {
+        applyFixedOverlay()
       } else {
+        clearFixedOverlayStyles()
         outerRow.style.display = ''
-        if (!homeHeroEmbeddedLayout) {
-          const headerBottom = headerWrapper
-            ? headerWrapper.getBoundingClientRect().bottom
-            : headerSecondaryRow
-              ? headerSecondaryRow.getBoundingClientRect().bottom
-              : 0
-          const nonHomeOffset = 0
-          outerRow.style.position = 'fixed'
-          outerRow.style.left = '0'
-          outerRow.style.right = '0'
-          outerRow.style.bottom = ''
-          outerRow.style.top = `${Math.max(0, Math.round(headerBottom) + nonHomeOffset)}px`
-          outerRow.style.zIndex = '15'
-          outerRow.style.pointerEvents = 'none'
-          outerRow.style.background = 'transparent'
-          outerRow.style.overflow = 'visible'
-
-          if (contentRow) {
-            contentRow.style.overflow = 'visible'
-            contentRow.style.pointerEvents = 'none'
-          }
-
-          const menuCol = outerRow.querySelector(
-            '[class*="megaMenuCol"]'
+        if (contentRow) {
+          contentRow.style.overflow = ''
+          contentRow.style.pointerEvents = ''
+          contentRow.style.height = ''
+        }
+        const scrollTop =
+          window.scrollY ||
+          document.documentElement.scrollTop ||
+          document.body.scrollTop ||
+          0
+        const overShadow = scrollTop <= 1
+        const stackZ = overShadow ? '21' : '10'
+        const menuCol = outerRow.querySelector(
+          '[class*="megaMenuCol"]'
+        ) as HTMLElement | null
+        if (menuCol) {
+          menuCol.style.pointerEvents = ''
+          menuCol.style.overflow = ''
+          menuCol.style.removeProperty('margin-top')
+          menuCol.style.zIndex = stackZ
+        }
+        const menuColChild = outerRow.querySelector(
+          '[class*="flexColChild--megaMenuCol"]'
+        ) as HTMLElement | null
+        if (menuColChild) {
+          menuColChild.style.pointerEvents = ''
+          menuColChild.style.overflow = ''
+          menuColChild.style.zIndex = stackZ
+        }
+        if (headerWrapper) {
+          headerWrapper.style.boxShadow = ''
+        }
+        if (navRef.current) {
+          navRef.current.style.removeProperty('pointer-events')
+          navRef.current.style.removeProperty('overflow')
+          navRef.current.style.removeProperty('box-shadow')
+          navRef.current.style.removeProperty('border-top')
+          navRef.current.style.removeProperty('background')
+          navRef.current.style.removeProperty('margin-top')
+          navRef.current.style.zIndex = stackZ
+          const submenuEl = navRef.current.querySelector(
+            '[class*="submenuContainer"]'
           ) as HTMLElement | null
-          if (menuCol) {
-            menuCol.style.pointerEvents = 'auto'
-            menuCol.style.overflow = 'visible'
-          }
-
-          const menuColChild = outerRow.querySelector(
-            '[class*="flexColChild--megaMenuCol"]'
-          ) as HTMLElement | null
-          if (menuColChild) {
-            menuColChild.style.pointerEvents = 'auto'
-            menuColChild.style.overflow = 'visible'
-          }
-
-          if (headerWrapper) {
-            headerWrapper.style.boxShadow = ''
-          }
-          if (navRef.current) {
-            navRef.current.style.pointerEvents = 'auto'
-            navRef.current.style.overflow = 'visible'
-            navRef.current.style.setProperty('background', '#fafafa', 'important')
-            navRef.current.style.setProperty(
-              'box-shadow',
-              '4px 4px 6.5px rgba(0, 0, 0, 0.07)',
-              'important'
-            )
-            navRef.current.style.setProperty('border-top', '1px solid #f0f0f0', 'important')
-
-            const submenuEl = navRef.current.querySelector(
-              '[class*="submenuContainer"]'
-            ) as HTMLElement | null
-            if (submenuEl) {
-              submenuEl.style.pointerEvents = 'auto'
-              submenuEl.style.zIndex = '16'
-            }
-          }
-        } else {
-          outerRow.style.position = ''
-          outerRow.style.left = ''
-          outerRow.style.right = ''
-          outerRow.style.bottom = ''
-          outerRow.style.top = ''
-          outerRow.style.zIndex = ''
-          outerRow.style.pointerEvents = ''
-          outerRow.style.background = ''
-          outerRow.style.overflow = ''
-          if (contentRow) {
-            contentRow.style.overflow = ''
-            contentRow.style.pointerEvents = ''
-          }
-          const scrollTop =
-            window.scrollY ||
-            document.documentElement.scrollTop ||
-            document.body.scrollTop ||
-            0
-          const overShadow = scrollTop <= 1
-          const stackZ = overShadow ? '21' : '10'
-          const menuCol = outerRow.querySelector(
-            '[class*="megaMenuCol"]'
-          ) as HTMLElement | null
-          if (menuCol) {
-            menuCol.style.pointerEvents = ''
-            menuCol.style.overflow = ''
-            menuCol.style.zIndex = stackZ
-          }
-          const menuColChild = outerRow.querySelector(
-            '[class*="flexColChild--megaMenuCol"]'
-          ) as HTMLElement | null
-          if (menuColChild) {
-            menuColChild.style.pointerEvents = ''
-            menuColChild.style.overflow = ''
-            menuColChild.style.zIndex = stackZ
-          }
-          if (headerWrapper) {
-            headerWrapper.style.boxShadow = ''
-          }
-          if (navRef.current) {
-            navRef.current.style.removeProperty('pointer-events')
-            navRef.current.style.removeProperty('overflow')
-            navRef.current.style.removeProperty('box-shadow')
-            navRef.current.style.removeProperty('border-top')
-            navRef.current.style.removeProperty('background')
-            navRef.current.style.zIndex = stackZ
-            const submenuEl = navRef.current.querySelector(
-              '[class*="submenuContainer"]'
-            ) as HTMLElement | null
-            if (submenuEl) {
-              submenuEl.style.pointerEvents = ''
-              submenuEl.style.zIndex = ''
-            }
+          if (submenuEl) {
+            submenuEl.style.pointerEvents = ''
+            submenuEl.style.zIndex = ''
           }
         }
       }
     }
 
-    if (contentRow && !homeHeroEmbeddedLayout) {
-      contentRow.style.height = isOpenMenu ? 'auto' : ''
-    } else if (contentRow) {
-      contentRow.style.height = ''
-    }
-
     const bannerCols = document.querySelectorAll('[class*="bannerCol"]')
-
     bannerCols.forEach((el) => {
       ;(el as HTMLElement).style.display = homeHeroEmbeddedLayout ? '' : 'none'
     })
-  }, [isOpenMenu, isHomePage, isHomeHeroMegaVisible, departmentActive])
+
+    let raf = 0
+    const syncFixedTop = () => {
+      if (!isOpenMenu || homeHeroEmbeddedLayout || !outerRow) return
+      if (getComputedStyle(outerRow).position !== 'fixed') return
+      const headerBottom = getHeaderBottomPx()
+      outerRow.style.top = `${Math.max(0, Math.round(headerBottom))}px`
+    }
+    const scheduleSync = () => {
+      cancelAnimationFrame(raf)
+      raf = requestAnimationFrame(() => {
+        raf = 0
+        syncFixedTop()
+      })
+    }
+
+    if (isOpenMenu && !homeHeroEmbeddedLayout) {
+      window.addEventListener('scroll', scheduleSync, { passive: true })
+      window.addEventListener('resize', scheduleSync)
+      scheduleSync()
+    }
+
+    return () => {
+      window.removeEventListener('scroll', scheduleSync)
+      window.removeEventListener('resize', scheduleSync)
+      cancelAnimationFrame(raf)
+      if (!isOpenMenu) {
+        removeFixedSpacer()
+      }
+    }
+  }, [isOpenMenu, isHomePage, isHomeHeroMegaVisible, departmentActive, homeHeroEmbeddedLayout])
 
   const debouncedHandleMouseEnter = useCallback(
     _debounce((department: MenuItem | null) => {
