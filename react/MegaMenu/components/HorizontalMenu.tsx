@@ -415,7 +415,8 @@ const HorizontalMenu: FC<InjectedIntlProps> = observer(({ intl }) => {
       if (menuCol) {
         menuCol.style.pointerEvents = 'auto'
         menuCol.style.overflow = 'visible'
-        menuCol.style.setProperty('margin-top', '0', 'important')
+        // Keep theme margin-top (8px) so the panel sits under the sticky header seam
+        menuCol.style.removeProperty('margin-top')
         menuCol.style.zIndex = '25'
       }
 
@@ -434,7 +435,7 @@ const HorizontalMenu: FC<InjectedIntlProps> = observer(({ intl }) => {
       if (navRef.current) {
         navRef.current.style.pointerEvents = 'auto'
         navRef.current.style.overflow = 'visible'
-        navRef.current.style.setProperty('margin-top', '0', 'important')
+        navRef.current.style.removeProperty('margin-top')
         navRef.current.style.setProperty('background', '#fafafa', 'important')
         navRef.current.style.setProperty(
           'box-shadow',
