@@ -117,8 +117,6 @@ const HorizontalMenu: FC<InjectedIntlProps> = observer(({ intl }) => {
   useEffect(() => {
     if (typeof window === 'undefined') return
 
-    const TOP_EPS = 1
-
     const applyStack = () => {
       const outerRow = document.querySelector(
         '[class*="flexRow--megaMenuContainer"]'
@@ -132,11 +130,6 @@ const HorizontalMenu: FC<InjectedIntlProps> = observer(({ intl }) => {
         '[class*="flexColChild--megaMenuCol"]'
       ) as HTMLElement | null
       const nav = navRef.current
-      const scrollTop =
-        window.scrollY ||
-        document.documentElement.scrollTop ||
-        document.body.scrollTop ||
-        0
       const isFixed = getComputedStyle(outerRow).position === 'fixed'
       if (isFixed && isOpenMenu) {
         if (menuCol) menuCol.style.zIndex = '25'
@@ -144,6 +137,12 @@ const HorizontalMenu: FC<InjectedIntlProps> = observer(({ intl }) => {
         if (nav) nav.style.zIndex = '25'
         return
       }
+      const TOP_EPS = 1
+      const scrollTop =
+        window.scrollY ||
+        document.documentElement.scrollTop ||
+        document.body.scrollTop ||
+        0
       const overShadow =
         isHomePage &&
         isHomeHeroMegaVisible &&
