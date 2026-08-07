@@ -407,6 +407,9 @@ const HorizontalMenu: FC<InjectedIntlProps> = observer(({ intl }) => {
         contentRow.style.overflow = 'visible'
         contentRow.style.pointerEvents = 'none'
         contentRow.style.height = isOpenMenu ? 'auto' : ''
+        contentRow.style.maxWidth = 'none'
+        contentRow.style.marginLeft = '0'
+        contentRow.style.marginRight = '0'
       }
 
       const menuCol = outerRow.querySelector(
@@ -485,6 +488,9 @@ const HorizontalMenu: FC<InjectedIntlProps> = observer(({ intl }) => {
           contentRow.style.overflow = ''
           contentRow.style.pointerEvents = ''
           contentRow.style.height = ''
+          contentRow.style.removeProperty('max-width')
+          contentRow.style.removeProperty('margin-left')
+          contentRow.style.removeProperty('margin-right')
         }
         const menuCol = outerRow.querySelector(
           '[class*="megaMenuCol"]'
@@ -531,6 +537,9 @@ const HorizontalMenu: FC<InjectedIntlProps> = observer(({ intl }) => {
           contentRow.style.overflow = ''
           contentRow.style.pointerEvents = ''
           contentRow.style.height = ''
+          contentRow.style.removeProperty('max-width')
+          contentRow.style.removeProperty('margin-left')
+          contentRow.style.removeProperty('margin-right')
         }
         const scrollTop =
           window.scrollY ||
