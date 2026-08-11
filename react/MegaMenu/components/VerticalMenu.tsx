@@ -38,6 +38,7 @@ const CSS_HANDLES = [
   'styledLinkContent',
   'styledLinkText',
   'styledLinkTextLabel',
+  'topLevelNavLabel',
   'accordionIconContainer',
   'accordionIcon',
   'contButtonsContainer',
@@ -75,6 +76,16 @@ const mobileLabelStyle: CSSProperties = {
   flex: '0 1 auto',
   minWidth: 0,
   textAlign: 'left',
+}
+
+/** Promotii / Catalog — bold ca în Figma; Cont / Produse rămân medium */
+const mobileTopLevelLabelStyle: CSSProperties = {
+  ...mobileLabelStyle,
+  fontFamily: "'Sana Sans Alt', sans-serif",
+  fontWeight: 700,
+  fontSize: 15,
+  lineHeight: '18px',
+  color: '#121212',
 }
 
 /** Meniu drawer mobil: rotație pe container — 20×20, Figma închis 90deg / deschis -90deg */
@@ -515,8 +526,11 @@ const VerticalMenu: FC<VerticalMenuProps> = observer(({ intl }) => {
                       alt=""
                     />
                     <span
-                      className={handles.styledLinkTextLabel}
-                      style={mobileLabelStyle}
+                      className={classNames(
+                        handles.styledLinkTextLabel,
+                        handles.topLevelNavLabel
+                      )}
+                      style={mobileTopLevelLabelStyle}
                     >
                       Promotii
                     </span>
@@ -546,8 +560,11 @@ const VerticalMenu: FC<VerticalMenuProps> = observer(({ intl }) => {
                       alt=""
                     />
                     <span
-                      className={handles.styledLinkTextLabel}
-                      style={mobileLabelStyle}
+                      className={classNames(
+                        handles.styledLinkTextLabel,
+                        handles.topLevelNavLabel
+                      )}
+                      style={mobileTopLevelLabelStyle}
                     >
                       Catalog
                     </span>
