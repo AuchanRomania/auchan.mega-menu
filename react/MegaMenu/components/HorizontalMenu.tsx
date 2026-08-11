@@ -406,9 +406,10 @@ const HorizontalMenu: FC<InjectedIntlProps> = observer(({ intl }) => {
         contentRow.style.overflow = 'visible'
         contentRow.style.pointerEvents = 'none'
         contentRow.style.height = isOpenMenu ? 'auto' : ''
-        contentRow.style.maxWidth = 'none'
-        contentRow.style.marginLeft = '0'
-        contentRow.style.marginRight = '0'
+        contentRow.style.maxWidth = '1538px'
+        contentRow.style.marginLeft = 'auto'
+        contentRow.style.marginRight = 'auto'
+        contentRow.style.width = '100%'
       }
 
       const menuCol = outerRow.querySelector(
@@ -417,7 +418,6 @@ const HorizontalMenu: FC<InjectedIntlProps> = observer(({ intl }) => {
       if (menuCol) {
         menuCol.style.pointerEvents = 'auto'
         menuCol.style.overflow = 'visible'
-        // Keep theme margin-top (8px) so the panel sits under the sticky header seam
         menuCol.style.removeProperty('margin-top')
         menuCol.style.zIndex = '25'
       }
