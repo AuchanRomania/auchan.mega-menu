@@ -103,7 +103,12 @@
   }
 
   .triggerContainer::after {
-    margin-left: 12px;
+    margin-left: 0;
+  }
+
+  .triggerButtonIcon {
+    width: 28px;
+    height: 28px;
   }
 }
 
