@@ -7,7 +7,7 @@ import { injectIntl } from 'react-intl'
 import Skeleton from 'react-loading-skeleton'
 import { useCssHandles } from 'vtex.css-handles'
 import { formatIOMessage } from 'vtex.native-types'
-import { Link } from 'vtex.render-runtime'
+import { ExtensionPoint, Link } from 'vtex.render-runtime'
 import { useRenderSession } from 'vtex.session-client'
 import { IconCaret } from 'vtex.store-icons'
 import { Collapsible } from 'vtex.styleguide'
@@ -47,6 +47,7 @@ const CSS_HANDLES = [
   'contMenuItem',
   'contMenuItemIcon',
   'contMenuItemText',
+  'afterVerticalMenu',
 ] as const
 
 /** Figma mobil 759-29338 (Cont), 759-29352 (Produse) — același layout ca Item */
@@ -554,6 +555,9 @@ const VerticalMenu: FC<VerticalMenuProps> = observer(({ intl }) => {
                 </div>
               </a>
             </div>
+          </li>
+          <li className={classNames(handles.menuItemVertical, handles.afterVerticalMenu)}>
+            <ExtensionPoint id="after-vertical-menu" />
           </li>
         </ul>
       </div>
