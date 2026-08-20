@@ -1,7 +1,13 @@
 {
   "mega-menu": {
     "component": "MegaMenu",
-    "allowed": ["before-menu", "after-menu", "after-vertical-menu"]
+    "allowed": [
+      "before-menu",
+      "after-menu",
+      "after-produse-menu",
+      "after-promotii-menu",
+      "after-vertical-menu"
+    ]
   },
   "before-menu": {
     "component": "Extension",
@@ -9,6 +15,16 @@
     "allowed": "*"
   },
   "after-menu": {
+    "component": "Extension",
+    "composition": "children",
+    "allowed": "*"
+  },
+  "after-produse-menu": {
+    "component": "Extension",
+    "composition": "children",
+    "allowed": "*"
+  },
+  "after-promotii-menu": {
     "component": "Extension",
     "composition": "children",
     "allowed": "*"
