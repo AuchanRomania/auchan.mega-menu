@@ -592,7 +592,9 @@ const VerticalMenu: FC<VerticalMenuProps> = observer(({ intl }) => {
             </div>
           </li>
           <li className={classNames(handles.menuItemVertical, handles.afterVerticalMenu)}>
-            <ExtensionPoint id="after-vertical-menu" />
+            <div className={handles.styledLinkContainer}>
+              <ExtensionPoint id="after-vertical-menu" />
+            </div>
           </li>
         </ul>
       </div>
