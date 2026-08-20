@@ -323,9 +323,14 @@
   display: block;
   width: 24px;
   height: 24px;
+  min-width: 24px;
+  min-height: 24px;
   margin-right: 0;
   object-fit: contain;
+  object-position: center;
   color: #121212;
+  box-sizing: border-box;
+  flex: 0 0 24px;
 }
 
 .menuItemBadge {
