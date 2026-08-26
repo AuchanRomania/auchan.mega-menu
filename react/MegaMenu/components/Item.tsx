@@ -15,6 +15,7 @@ const CSS_HANDLES = [
   'styledLinkContainer',
   'styledLinkContent',
   'styledLinkText',
+  'styledLinkTextLabel',
   'accordionIconContainer',
   'accordionIcon',
   'menuItemIcon',
@@ -27,9 +28,80 @@ const defaultTypography: Record<number, string> = {
   3: 't-body',
 }
 
+const styledLinkRowStyle: React.CSSProperties = {
+  display: 'flex',
+  flexDirection: 'row',
+  alignItems: 'center',
+  justifyContent: 'flex-start',
+  gap: 12,
+  width: '100%',
+}
+
+const styledLinkTextClusterStyle: React.CSSProperties = {
+  display: 'flex',
+  flexDirection: 'row',
+  alignItems: 'center',
+  justifyContent: 'flex-start',
+  flex: '1 1 auto',
+  minWidth: 0,
+  gap: 12,
+  textAlign: 'left',
+}
+
+const styledLinkLabelStyle: React.CSSProperties = {
+  flex: '0 1 auto',
+  minWidth: 0,
+  textAlign: 'left',
+}
+
+const accordionClusterStyle: React.CSSProperties = {
+  display: 'flex',
+  marginLeft: 'auto',
+  flexShrink: 0,
+}
+
+function getAccordionIconContainerStyle(
+  isOpen: boolean,
+  orientation: 'vertical' | 'horizontal'
+): React.CSSProperties {
+  const rotate = isOpen ? 'rotate(-90deg)' : 'rotate(90deg)'
+  const base: React.CSSProperties = {
+    ...accordionClusterStyle,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 20,
+    flexShrink: 0,
+    boxSizing: 'border-box',
+    transform: rotate,
+    transformOrigin: 'center center',
+    transition: 'transform 0.2s ease',
+  }
+
+  if (orientation === 'vertical') {
+    return {
+      ...base,
+      height: 20,
+      minHeight: 20,
+    }
+  }
+
+  return {
+    ...base,
+    minHeight: 44,
+    height: 44,
+  }
+}
+
+const styledLinkRootStyle: React.CSSProperties = {
+  textAlign: 'left',
+  width: '100%',
+}
+
 const Item: FC<ItemProps> = observer((props) => {
   const { handles, withModifiers } = useCssHandles(CSS_HANDLES)
   const { departmentActive, config, setDepartmentActive } = megaMenuState
+  const menuOrientation = config.orientation ?? 'horizontal'
   const {
     id,
     to,
@@ -51,11 +123,14 @@ const Item: FC<ItemProps> = observer((props) => {
     uploadedIcon,
     optionalText,
     isCollection,
+    accordionExpanded,
     ...rest
   } = props
 
-  // Only for level 1
-  const isOpen = departmentActive?.id === id
+  const isAccordionOpen =
+    accordionExpanded !== undefined
+      ? accordionExpanded
+      : departmentActive?.id === id
   const hasLink = to && to !== '#'
 
   const linkClassNames = classNames(
@@ -66,6 +141,15 @@ const Item: FC<ItemProps> = observer((props) => {
       'fw6 c-on-base': isTitle,
       pointer: !disabled && !isTitle,
     }
+  )
+
+  const accordionContainerStyle = useMemo(
+    () =>
+      getAccordionIconContainerStyle(
+        isAccordionOpen,
+        menuOrientation === 'vertical' ? 'vertical' : 'horizontal'
+      ),
+    [isAccordionOpen, menuOrientation]
   )
 
   const stylesItem = useMemo(() => {
@@ -110,15 +194,20 @@ const Item: FC<ItemProps> = observer((props) => {
 
   const content = (
     <div
-      className={classNames(handles.styledLinkContent, 'flex justify-between')}
+      className={classNames(handles.styledLinkContent, 'flex')}
+      style={styledLinkRowStyle}
     >
       <div
         className={classNames(
           handles.styledLinkText,
-          'flex justify-between items-center',
+          'flex items-center',
           iconPosition === 'left' && iconComponent && 'nowrap'
         )}
-        {...(enableStyle && { style: stylesItem })}
+        style={
+          enableStyle
+            ? { ...stylesItem, ...styledLinkTextClusterStyle }
+            : styledLinkTextClusterStyle
+        }
       >
         {iconPosition === 'left' && iconComponent}
         {uploadedIcon && level < 3 && (
@@ -126,7 +215,12 @@ const Item: FC<ItemProps> = observer((props) => {
             <img className={handles.menuItemIcon} src={uploadedIcon} alt="" />
           </>
         )}
-        {children}
+        <span
+          className={handles.styledLinkTextLabel}
+          style={styledLinkLabelStyle}
+        >
+          {children}
+        </span>
         {optionalText && level === 3 && (
           <>
             <span className={handles.menuItemBadge}>{optionalText}</span>
@@ -138,8 +232,9 @@ const Item: FC<ItemProps> = observer((props) => {
         <div
           className={`${withModifiers(
             'accordionIconContainer',
-            isOpen ? 'isOpen' : 'isClosed'
-          )} ml1 c-muted-3`}
+            isAccordionOpen ? 'isOpen' : 'isClosed'
+          )} c-muted-3`}
+          style={accordionContainerStyle}
         >
           <IconCaret classNames={handles.accordionIcon} orientation="right" />
         </div>
@@ -155,15 +250,20 @@ const Item: FC<ItemProps> = observer((props) => {
     >
       {disabled || !hasLink ? (
         onClick ? (
-          <button className={linkClassNames}>{content}</button>
+          <button className={linkClassNames} style={styledLinkRootStyle}>
+            {content}
+          </button>
         ) : (
-          <span className={linkClassNames}>{content}</span>
+          <span className={linkClassNames} style={styledLinkRootStyle}>
+            {content}
+          </span>
         )
       ) : (
         <Link
           to={isCollection ? to : `${to}/c`}
           {...rest}
           className={linkClassNames}
+          style={styledLinkRootStyle}
           onClick={() => {
             if (config.orientation === 'vertical') {
               setDepartmentActive(null)
@@ -203,6 +303,7 @@ export interface ItemProps {
   isCollection?: boolean
   onClick?: () => void
   closeMenu?: (open: boolean) => void
+  accordionExpanded?: boolean
 }
 
 export default Item

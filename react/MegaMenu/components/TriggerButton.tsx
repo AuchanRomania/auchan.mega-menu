@@ -15,7 +15,14 @@ export const BUTTON_ID = 'mega-menu-trigger-button'
 
 const TriggerButton: FC<TriggerButtonProps> = observer((props) => {
   const { handles } = useCssHandles(CSS_HANDLES)
-  const { openMenu } = megaMenuState
+  const {
+    openMenu,
+    isOpenMenu,
+    isHomePage,
+    isHomeHeroMegaVisible,
+    config,
+  } = megaMenuState
+  const isHorizontalMenu = config.orientation === 'horizontal'
 
   const { isActive, activeClassName, mutedClassName, ...rest } = props
   const iconBaseClassName = applyModifiers(
@@ -26,8 +33,23 @@ const TriggerButton: FC<TriggerButtonProps> = observer((props) => {
   return (
     <button
       data-id={BUTTON_ID}
-      className={classNames(styles.triggerContainer, 'pointer')}
-      onClick={() => openMenu((v) => !v)}
+      className={classNames(
+        styles.triggerContainer,
+        applyModifiers(handles.triggerContainer, isOpenMenu ? 'open' : ''),
+        'pointer'
+      )}
+      onClick={() => {
+        // No-op only while the embedded home hero (banner + left column) is open and visible
+        if (
+          isHomePage &&
+          isHorizontalMenu &&
+          isOpenMenu &&
+          isHomeHeroMegaVisible
+        ) {
+          return
+        }
+        openMenu((v) => !v)
+      }}
     >
       <Icon
         activeClassName={classNames(iconBaseClassName, activeClassName)}
