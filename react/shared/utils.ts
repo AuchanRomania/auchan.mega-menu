@@ -1,6 +1,5 @@
 import type { MenuItem } from './types'
 
-/** Hide Promotii from desktop mega nav and from the mobile "Produse" sub-list only; data may remain in CMS. */
 export function isPromotiiMegaMenuDepartment(d: MenuItem) {
   const slug = (d.slug || '').toLowerCase().trim()
 

@@ -28,7 +28,6 @@ const defaultTypography: Record<number, string> = {
   3: 't-body',
 }
 
-/** Rând mobil (Figma 759-29338 / 759-29352): forțează icon + text la stânga, săgeată la dreapta */
 const styledLinkRowStyle: React.CSSProperties = {
   display: 'flex',
   flexDirection: 'row',
@@ -61,7 +60,6 @@ const accordionClusterStyle: React.CSSProperties = {
   flexShrink: 0,
 }
 
-/** Rotație pe container (IconCaret poate să nu moștenească .accordionIcon pe SVG). Mobil: 20×20. */
 function getAccordionIconContainerStyle(
   isOpen: boolean,
   orientation: 'vertical' | 'horizontal'
@@ -95,7 +93,6 @@ function getAccordionIconContainerStyle(
   }
 }
 
-/** Butonul / link-ul VTEX pot moșteni text-align: center */
 const styledLinkRootStyle: React.CSSProperties = {
   textAlign: 'left',
   width: '100%',
@@ -130,7 +127,6 @@ const Item: FC<ItemProps> = observer((props) => {
     ...rest
   } = props
 
-  /** Mobil: părintele ține expandedDeptId; desktop: departmentActive */
   const isAccordionOpen =
     accordionExpanded !== undefined
       ? accordionExpanded
@@ -307,7 +303,6 @@ export interface ItemProps {
   isCollection?: boolean
   onClick?: () => void
   closeMenu?: (open: boolean) => void
-  /** Meniu vertical: suprascrie departmentActive pentru rotația săgeții */
   accordionExpanded?: boolean
 }
 
