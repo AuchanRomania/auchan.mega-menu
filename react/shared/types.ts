@@ -46,6 +46,23 @@ export type MenusResponse = {
   menus: MenuItem[]
 }
 
+export type StorefrontMenuItem = {
+  id: string
+  name: string
+  slug: string
+  isCollection?: boolean
+  icon?: string
+  uploadedIcon?: string
+  banner?: string
+  linkBanner?: string
+  optionalText?: string
+  menu?: StorefrontMenuItem[]
+}
+
+export type StorefrontMenusResponse = {
+  menus: StorefrontMenuItem[]
+}
+
 export type DataMenu = MenuItem & {
   firstLevel?: string
   secondLevel?: string
@@ -67,10 +84,15 @@ export type UpdateData = (data: DataMenu[], type: string) => void
 export type ResponseFilterFunction = (filterArray: DataMenu[]) => void
 
 export type Orientation = 'vertical' | 'horizontal'
+export type MenuVariant = 'overlay' | 'embedded'
+
 export interface GlobalConfig {
   title?: string
   orientation?: Orientation
   defaultDepartmentActive?: string
+  variant?: MenuVariant
+  excludeSlugs?: string[]
+  headerOffset?: number
 }
 
 export interface IconProps {

@@ -1,0 +1,13 @@
+# Level 1 only, for the header overlay before the full tree is cached. Only
+# fields the storefront renders: the resolver already drops hidden and
+# excluded items.
+query getMenusL1($filterMenuItems: Boolean, $excludeSlugs: [String]) {
+  menus(filterMenuItems: $filterMenuItems, excludeSlugs: $excludeSlugs) {
+    id
+    name
+    icon
+    uploadedIcon
+    slug
+    isCollection
+  }
+}

@@ -60,5 +60,6 @@
   "admin/mega-menu.backup.download": "Download CSV",
   "admin/mega-menu.backup.upload": "Upload data",
   "admin/mega-menu.backup.uploadAlert": "Data upload successfully",
-  "admin/mega-menu.backup.duplicateData": "There are duplicate data in the file, please validate the file"
+  "admin/mega-menu.backup.duplicateData": "There are duplicate data in the file, please validate the file",
+  "store/mega-menu.trigger.label": "Products"
 }

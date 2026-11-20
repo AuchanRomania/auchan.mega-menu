@@ -1,4 +1,13 @@
+import { LRUCache } from '@vtex/api'
+
 import type { Menu, Args, ArgsUpload } from '../typings/custom'
+
+const TEN_MINUTES_MS = 10 * 60 * 1000
+
+const regionSellersCache = new LRUCache<string, string[]>({
+  max: 500,
+  maxAge: TEN_MINUTES_MS,
+})
 
 const sortMenusByOrder = (menus: Menu[]) => {
   return menus.sort((menuA: Menu, menuB: Menu) => menuA.order - menuB.order)
@@ -77,42 +86,112 @@ const parseSellerIDs = (menuItems: Menu[], regionID: string) => {
   })
 }
 
+const removeHiddenItems = (menuItems: Menu[]): Menu[] =>
+  menuItems
+    .filter((item) => item.display !== false)
+    .map((item) =>
+      item.menu?.length ? { ...item, menu: removeHiddenItems(item.menu) } : item
+    )
+
+const normalizeSlug = (slug: string) =>
+  slug.trim().toLowerCase().replace(/\/c$/, '').replace(/\/+$/, '')
+
+const removeExcludedItems = (menuItems: Menu[], excludeSlugs: string[]) => {
+  const excluded = excludeSlugs.map(normalizeSlug)
+
+  return menuItems.filter(
+    (item) => !(item.slug && excluded.includes(normalizeSlug(item.slug)))
+  )
+}
+
+const parseSegment = (segmentToken?: string): { regionId?: string } => {
+  if (!segmentToken) {
+    return {}
+  }
+
+  try {
+    return (
+      JSON.parse(Buffer.from(segmentToken, 'base64').toString('utf-8')) ?? {}
+    )
+  } catch (e) {
+    return {}
+  }
+}
+
+const getRegionSellerIds = async (
+  regionId: string | undefined,
+  ctx: Context
+): Promise<string[]> => {
+  if (!regionId) {
+    return []
+  }
+
+  const cached = regionSellersCache.get(regionId)
+
+  if (cached) {
+    return cached
+  }
+
+  try {
+    const regionSellers = await ctx.clients.region.getRegionSellers(regionId)
+    const sellerIds: string[] = (regionSellers?.[0]?.sellers ?? [])
+      .map((seller: { id?: string }) => seller?.id)
+      .filter(Boolean)
+
+    regionSellersCache.set(regionId, sellerIds)
+
+    return sellerIds
+  } catch (err) {
+    ctx.vtex.logger.warn({
+      message: 'mega-menu: region sellers lookup failed, menu not filtered',
+      regionId,
+      error: err?.message,
+    })
+
+    return []
+  }
+}
+
 export const menus = async (
   _: unknown,
-  { filterMenuItems }: { filterMenuItems: boolean },
+  {
+    filterMenuItems,
+    excludeSlugs,
+  }: { filterMenuItems: boolean; excludeSlugs?: string[] | null },
   ctx: Context
 ) => {
   const {
-    clients: { vbase, region },
+    clients: { vbase },
   } = ctx
 
-  const { segmentToken } = ctx.vtex
-
-  const segmentData = JSON.parse(
-    Buffer.from(segmentToken ?? '', 'base64').toString('utf-8')
-  )
-
-  const regionSellers = await region.getRegionSellers(segmentData?.regionId)
-  const addressSellers = regionSellers[0]?.sellers
+  const sellerIds = filterMenuItems
+    ? await getRegionSellerIds(
+        parseSegment(ctx.vtex.segmentToken).regionId,
+        ctx
+      )
+    : []
 
   let menuItems: Menu[] = []
 
   try {
-    menuItems = await vbase.getJSON<Menu[]>('menu', 'menuItems')
+    const storedMenu = (await vbase.getJSON<Menu[]>('menu', 'menuItems')) ?? []
+
+    menuItems = JSON.parse(JSON.stringify(storedMenu))
+
+    sellerIds.forEach((sellerId) => {
+      menuItems = parseSellerIDs(menuItems, sellerId)
+    })
 
     if (filterMenuItems) {
-      for (let i = 0; i < addressSellers.length; i++) {
-        const newMenu = parseSellerIDs(menuItems, addressSellers[i]?.id)
+      menuItems = removeHiddenItems(menuItems)
+    }
 
-        if (JSON.stringify(newMenu) !== JSON.stringify(menuItems)) {
-          menuItems = newMenu
-        }
-      }
+    if (excludeSlugs?.length) {
+      menuItems = removeExcludedItems(menuItems, excludeSlugs)
     }
   } catch (err) {
     const errStr = err.toString()
 
-    // If there are no menus, it is initialized empty
     if (errStr === 'Error: Request failed with status code 404') {
       await vbase.saveJSON('menu', 'menuItems', [])
     } else {

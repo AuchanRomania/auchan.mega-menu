@@ -3,6 +3,10 @@
 
 ## [Unreleased]
 
+### Changed
+- ECD-2911 Storefront menu rewritten for the redesign: department list with L2/L3 flyouts, header overlay and mobile accordion
+- ECD-2900 Lighter storefront menu: unused fields and hidden items dropped from the queries, menu data in the server HTML only on the homepage, no module-level state
+
 ## [0.2.1] - 2026-03-10
 
 ## [0.2.0] - 2026-01-29

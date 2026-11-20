@@ -1,0 +1,28 @@
+# Full tree for the flyouts and the mobile accordion; server-rendered only by
+# the homepage list. It does not answer getMenusL1 from the cache:
+# render-runtime keys results by document hash.
+query getMenusTree($filterMenuItems: Boolean, $excludeSlugs: [String]) {
+  menus(filterMenuItems: $filterMenuItems, excludeSlugs: $excludeSlugs) {
+    id
+    name
+    icon
+    uploadedIcon
+    slug
+    isCollection
+    banner
+    linkBanner
+    menu {
+      id
+      name
+      slug
+      isCollection
+      menu {
+        id
+        name
+        slug
+        isCollection
+        optionalText
+      }
+    }
+  }
+}

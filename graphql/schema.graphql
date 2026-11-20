@@ -1,5 +1,5 @@
 type Query {
-  menus(filterMenuItems: Boolean): [Menu]
+  menus(filterMenuItems: Boolean, excludeSlugs: [String]): [Menu]
     @cacheControl(scope: SEGMENT, maxAge: MEDIUM)
     @withSegment
   menu(id: ID!): Menu @cacheControl(scope: SEGMENT, maxAge: MEDIUM) @withSegment
