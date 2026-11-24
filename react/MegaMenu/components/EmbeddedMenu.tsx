@@ -32,8 +32,6 @@ const EmbeddedMenu: FC<EmbeddedMenuProps> = ({
 
   useEmbeddedInView(ref, headerOffset, departments.length > 0)
 
-  // Without data (the server render lost the query, or it is being retried)
-  // the placeholder fills the column instead of an empty box.
   return (
     <div ref={ref} className={handles.menuEmbedded}>
       {departments.length > 0 ? (
@@ -45,7 +43,9 @@ const EmbeddedMenu: FC<EmbeddedMenuProps> = ({
           renderAllPanels
         />
       ) : (
-        !data && <div className={handles.menuSkeleton} aria-hidden="true" />
+        !data?.menus && (
+          <div className={handles.menuSkeleton} aria-hidden="true" />
+        )
       )}
     </div>
   )
