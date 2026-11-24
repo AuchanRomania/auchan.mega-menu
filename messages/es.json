@@ -60,5 +60,6 @@
   "admin/mega-menu.backup.download": "Descargar CSV",
   "admin/mega-menu.backup.upload": "Cargar menu",
   "admin/mega-menu.backup.uploadAlert": "La carga del menú se realizó con éxito",
-  "admin/mega-menu.backup.duplicateData": "Existen datos duplicados en el archivo, por favor validar e intentar de nuevo"
+  "admin/mega-menu.backup.duplicateData": "Existen datos duplicados en el archivo, por favor validar e intentar de nuevo",
+  "store/mega-menu.trigger.label": "Productos"
 }

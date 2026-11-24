@@ -60,5 +60,6 @@
   "admin/mega-menu.backup.download": "Télécharger au format CSV",
   "admin/mega-menu.backup.upload": "Charger des données",
   "admin/mega-menu.backup.uploadAlert": "Le chargement des données a réussi",
-  "admin/mega-menu.backup.duplicateData": "Il y a des données en double dans le fichier, veuillez valider le fichier"
+  "admin/mega-menu.backup.duplicateData": "Il y a des données en double dans le fichier, veuillez valider le fichier",
+  "store/mega-menu.trigger.label": "Produits"
 }
